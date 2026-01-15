@@ -11,6 +11,9 @@ public interface UserService {
     List<User> findAllUser();
     void deleteUser(UUID userId);
     int userCount();
-
+    User updateName(UUID userId, String newName);
+    User updateEmail(UUID userId, String newEmail);
+    User updatePhoneNumber(UUID userId, String newPhoneNumber);
+    User updatePassword(UUID userId, String nenwPassword);
 
 }

@@ -1,7 +1,6 @@
-package com.sprint.mission.discodeit;
+package com.sprint.mission.discodeit.utils;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

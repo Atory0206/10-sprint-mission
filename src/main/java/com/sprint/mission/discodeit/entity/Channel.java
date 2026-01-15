@@ -34,37 +34,11 @@ public class Channel extends BaseEntity {
         setUpdatedAt(System.currentTimeMillis());
     }
 
-    public int getCurrentUserCount(){
-        return userList.size();
-    }
-
-    public void enter(User user) {
-        userList.add(user);
-        setUpdatedAt(System.currentTimeMillis());
-    }
-
-    public void exit(User user) {
-        userList.remove(user);
-        setUpdatedAt(System.currentTimeMillis());
-    }
-
     public List<User> getUserList() {
         return userList;
     }
+    public List<Message> getMessageList() { return messageList; }
 
-    public void addMessage(Message message){
-        messageList.add(message);
-        setUpdatedAt(System.currentTimeMillis());
-    }
-
-    public void removeMessage(Message message){
-        messageList.remove(message);
-        setUpdatedAt(System.currentTimeMillis());
-    }
-
-    public int getMessageCount(){
-        return messageList.size();
-    }
 
 
 }

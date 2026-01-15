@@ -58,12 +58,4 @@ public class User extends BaseEntity {
         this.password = userPassword;
         setUpdatedAt(System.currentTimeMillis());
     }
-
-    public void setInfo(String name, String email, String password, String phoneNumber) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-        setUpdatedAt(System.currentTimeMillis());
-    }
 }
