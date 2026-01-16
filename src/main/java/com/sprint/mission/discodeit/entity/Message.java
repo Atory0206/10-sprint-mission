@@ -6,14 +6,13 @@ public class Message extends BaseEntity {
     private final Channel channel;
     private final User user;
     private String content;
-    private final long sentAt;
+
 
     public Message (User user, Channel channel, String content) {
         super();
         this.user = user;
         this.channel = channel;
         this.content = content;
-        this.sentAt = System.currentTimeMillis();
     }
 
     public void setContent(String setMessage) {
@@ -23,10 +22,6 @@ public class Message extends BaseEntity {
 
     public String getContent() {
         return content;
-    }
-
-    public long getSentAt() {
-        return sentAt;
     }
 
     public Channel getChannel() {
