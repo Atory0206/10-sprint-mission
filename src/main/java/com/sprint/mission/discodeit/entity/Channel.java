@@ -6,7 +6,7 @@ public class Channel extends BaseEntity {
     private String name;
     private String intro;
     private List <User> userList = new ArrayList<>();
-    private List <Message> messageList = new ArrayList<>();
+    private List <UUID> messageList = new ArrayList<>();
 
 
 
@@ -37,7 +37,7 @@ public class Channel extends BaseEntity {
     public List<User> getUserList() {
         return userList;
     }
-    public List<Message> getMessageList() { return messageList; }
+    public List<UUID> getMessageList() { return messageList; }
 
 
 

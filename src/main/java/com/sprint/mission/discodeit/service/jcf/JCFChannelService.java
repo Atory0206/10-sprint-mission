@@ -4,13 +4,16 @@ import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
 import com.sprint.mission.discodeit.service.ChannelService;
+import com.sprint.mission.discodeit.service.UserService;
 
 import java.util.*;
 
 public class JCFChannelService implements ChannelService {
     private final Map<UUID, Channel> channelList;
+    private final UserService userService;
 
-    public JCFChannelService(){
+    public JCFChannelService(UserService userService)
+    {   this.userService = userService;
         this.channelList = new HashMap<>();
     }
 
@@ -35,7 +38,7 @@ public class JCFChannelService implements ChannelService {
             throw new IllegalArgumentException("해당 채널을 찾을 수 없습니다.");
         }
 
-        return channelList.get(channelId);
+        return channel;
     }
 
     public List<Channel> findAllChannels () {return new ArrayList<>(channelList.values());}
@@ -69,36 +72,46 @@ public class JCFChannelService implements ChannelService {
     }
 
     @Override
-    public void enter(Channel channel, User user) {
+    public void enter(UUID userId, UUID channelId) {
+        Channel channel = findChannelById(channelId);
+        User user = userService.findUserById(userId);
+
         channel.getUserList().add(user);
         channel.setUpdatedAt(System.currentTimeMillis());
     }
 
     @Override
-    public void exit(Channel channel, User user) {
+    public void exit(UUID userId , UUID channelId) {
+        Channel channel = findChannelById(channelId);
+        User user = userService.findUserById(userId);
+
         channel.getUserList().remove(user);
         channel.setUpdatedAt(System.currentTimeMillis());
     }
 
     @Override
-    public void addMessage(Channel channel, Message message) {
-        channel.getMessageList().add(message);
+    public void addMessage(UUID channelId, UUID messageId) {
+        Channel channel = findChannelById(channelId);
+        channel.getMessageList().add(messageId);
         channel.setUpdatedAt(System.currentTimeMillis());
     }
 
     @Override
-    public void removeMessage(Channel channel, Message message) {
-        channel.getMessageList().remove(message);
+    public void removeMessage(UUID channelId, UUID messageId) {
+        Channel channel = findChannelById(channelId);
+        channel.getMessageList().remove(messageId);
         channel.setUpdatedAt(System.currentTimeMillis());
     }
 
     @Override
-    public int getCurrentUserCount(Channel channel) {
+    public int getCurrentUserCount(UUID channelId) {
+        Channel channel = findChannelById(channelId);
         return channel.getUserList().size();
     }
 
     @Override
-    public int getMessageCount(Channel channel) {
+    public int getMessageCount(UUID channelId) {
+        Channel channel = findChannelById(channelId);
         return channel.getMessageList().size();
     }
 

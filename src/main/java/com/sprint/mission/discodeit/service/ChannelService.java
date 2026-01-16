@@ -13,10 +13,10 @@ public interface ChannelService {
     List<Channel> findAllChannels();
     Channel updateChannel(UUID channelId, String name, String intro);
     void deleteChannel(UUID channelId);
-    void enter(Channel channel, User user);
-    void exit(Channel channel, User user);
-    void addMessage(Channel channel, Message message);
-    void removeMessage(Channel channel, Message message);
-    int getCurrentUserCount(Channel channel);
-    int getMessageCount(Channel channel);
+    void enter(UUID userId, UUID channelId);
+    void exit(UUID userId, UUID channelId );
+    void addMessage(UUID channelId, UUID messageId);
+    void removeMessage(UUID channelId, UUID messageId);
+    int getCurrentUserCount(UUID channelId);
+    int getMessageCount(UUID channelId);
 }

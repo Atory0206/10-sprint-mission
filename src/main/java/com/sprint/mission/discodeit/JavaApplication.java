@@ -14,7 +14,7 @@ public class JavaApplication {
 
     public static void main(String[] args) {
         UserService userService = new JCFUserService();
-        ChannelService channelService = new JCFChannelService();
+        ChannelService channelService = new JCFChannelService(userService);
         MessageService messageService = new JCFMessageService(userService, channelService);
 
 
@@ -116,9 +116,9 @@ public class JavaApplication {
         }
 
 
-        channelService.enter(firstChannel, firstUser);
+        channelService.enter(firstUser.getId(), firstChannel.getId());
         System.out.println(firstUser.getName() + " 유저가 " + firstChannel.getName() + " 채널에 입장했습니다.");
-        channelService.enter(firstChannel, secondUser);
+        channelService.enter(secondUser.getId(), firstChannel.getId());
         System.out.println(secondUser.getName() + " 유저가  " + firstChannel.getName() + " 채널에 입장했습니다.");
 
         for (User userName : firstChannel.getUserList()) {
@@ -126,10 +126,10 @@ public class JavaApplication {
         }
 
         System.out.println("현재 " + firstChannel.getName() + " 채널에 유저가 "
-                + channelService.getCurrentUserCount(firstChannel) + "명이 있습니다.");
+                + channelService.getCurrentUserCount(firstChannel.getId()) + "명이 있습니다.");
 
 
-        channelService.exit(firstChannel, secondUser);
+        channelService.exit(secondUser.getId(), firstChannel.getId());
         System.out.println(secondUser.getName() + " 유저가  " + firstChannel.getName() + " 채널에 퇴장했습니다.");
 
         try {
@@ -146,7 +146,7 @@ public class JavaApplication {
         }
 
         System.out.println("현재 " + firstChannel.getName() + " 채널에 유저가 "
-                + channelService.getCurrentUserCount(firstChannel) + "명이 있습니다.");
+                + channelService.getCurrentUserCount(firstChannel.getId()) + "명이 있습니다.");
 
 
         try {
@@ -183,7 +183,7 @@ public class JavaApplication {
         System.out.println("채널이 있습니다");
 
         Message firstUserMessage = messageService.createMessage(firstUser.getId(),firstChannel.getId(),"안녕하세요");
-        channelService.addMessage(firstChannel,firstUserMessage);
+
         System.out.println(firstUser.getName() + " : " + firstUserMessage.getContent() + " 보낸 시간 : "
                            + TimeFormatter.format(firstUserMessage.getSentAt()));
         System.out.println(firstUser.getName() + " 유저가 메세지를 보냈습니다." );
@@ -191,7 +191,6 @@ public class JavaApplication {
         try {
             UUID uuid = UUID.randomUUID();
             Message temMessage = messageService.createMessage(uuid, firstChannel.getId(),"삭제 체크");
-            channelService.addMessage(firstChannel,firstUserMessage);
             System.out.println(firstUser.getName() + " : " + firstUserMessage.getContent() + " 보낸 시간 : "
                     + TimeFormatter.format(firstUserMessage.getSentAt()));
             System.out.println(firstUser.getName() + " 유저가 메세지를 보냈습니다." );
@@ -202,7 +201,6 @@ public class JavaApplication {
         try {
             UUID uuid = UUID.randomUUID();
             Message temMessage = messageService.createMessage(firstUser.getId(), uuid,"삭제 체크");
-            channelService.addMessage(firstChannel,firstUserMessage);
             System.out.println(firstUser.getName() + " : " + firstUserMessage.getContent() + " 보낸 시간 : "
                     + TimeFormatter.format(firstUserMessage.getSentAt()));
             System.out.println(firstUser.getName() + " 유저가 메세지를 보냈습니다." );
@@ -226,7 +224,6 @@ public class JavaApplication {
         }
 
         Message firstUserMessage2 = messageService.createMessage(firstUser.getId(),firstChannel.getId(),"곤니치와");
-        channelService.addMessage(firstChannel,firstUserMessage2);
         System.out.println(firstUser.getName() + " : " + firstUserMessage2.getContent() + " 보낸 시간 : "
                 + TimeFormatter.format(firstUserMessage2.getSentAt()));
         System.out.println(firstUser.getName() + " 유저가 메세지를 보냈습니다." );
@@ -269,11 +266,10 @@ public class JavaApplication {
             System.out.println(message.getContent());
         }
 
-        int messageCount = channelService.getMessageCount(firstChannel);
+        int messageCount = channelService.getMessageCount(firstChannel.getId());
         System.out.println("현재 " +firstChannel.getName() + " 채널에 " + messageCount + "개의 메세지가 있습니다.");
 
         messageService.deleteMessage(firstUserMessage2.getId());    //유저의 메세지 삭제
-        channelService.removeMessage(firstChannel,firstUserMessage2);              //채널에서 메세지 삭제
         System.out.println("두번째 메세지 삭제");
 
         try{UUID uuid = UUID.randomUUID();
@@ -288,15 +284,7 @@ public class JavaApplication {
             System.out.println(message.getContent());
         }
 
-        messageCount = channelService.getMessageCount(firstChannel);
+        messageCount = channelService.getMessageCount(firstChannel.getId());
         System.out.println("현재 " +firstChannel.getName() + " 채널에 " + messageCount + "개의 메세지가 있습니다.");
-
-
-
-
     }
-
-
-
-
 }

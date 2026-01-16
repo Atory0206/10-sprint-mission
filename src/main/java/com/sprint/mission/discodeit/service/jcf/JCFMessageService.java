@@ -26,7 +26,8 @@ public class JCFMessageService implements MessageService {
         User user =  userService.findUserById(userId);
         Channel channel = channelService.findChannelById(channelId); // 이미 find단계에서 유저서비스나 채널서비스가 예외던지기 검증을 한다
 
-        Message newMessage = new Message(userId, channelId, content);
+        Message newMessage = new Message(user, channel, content);
+        channelService.addMessage(channelId, newMessage.getId());
         messageStore.put(newMessage.getId(), newMessage);
         return newMessage;
     }
@@ -71,6 +72,7 @@ public class JCFMessageService implements MessageService {
 
     public void deleteMessage(UUID messageId){
         Message message = findMessageById(messageId);
+        channelService.removeMessage(message.getChannel().getId(), messageId);
         messageStore.remove(messageId);
     }
 }
