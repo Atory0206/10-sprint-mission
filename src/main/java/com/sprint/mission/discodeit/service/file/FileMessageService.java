@@ -1,34 +1,38 @@
-package com.sprint.mission.discodeit.service.jcf;
+package com.sprint.mission.discodeit.service.file;
 
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.service.MessageService;
+import com.sprint.mission.discodeit.repository.ChannelRepository;
+import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.service.ChannelService;
+import com.sprint.mission.discodeit.service.MessageService;
 import com.sprint.mission.discodeit.service.UserService;
 
-import java.util.*;
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class JCFMessageService implements MessageService {
-    private final Map<UUID,Message> messageStore;
+public class FileMessageService implements MessageService {
     private final UserService userService;
     private final ChannelService channelService;
+    private final MessageRepository messageRepo;
 
-
-    public JCFMessageService(UserService userService, ChannelService channelService) {
-        this.messageStore = new HashMap<>();
+    public FileMessageService(UserService userService, ChannelService channelService, MessageRepository messageRepo) {
         this.userService = userService;
         this.channelService = channelService;
+        this.messageRepo = messageRepo;
     }
 
-    @Override
     public Message createMessage(UUID userId, UUID channelId, String content) {
         User user =  userService.findUserById(userId);
         Channel channel = channelService.findChannelById(channelId); // 이미 find단계에서 유저서비스나 채널서비스가 예외던지기 검증을 한다
 
         Message newMessage = new Message(userId, channelId, content);
         channelService.addMessage(channelId, newMessage.getId());
-        messageStore.put(newMessage.getId(), newMessage);
+        messageRepo.save(newMessage);
         return newMessage;
     }
 
@@ -40,39 +44,29 @@ public class JCFMessageService implements MessageService {
         }
 
         message.setContent(content);
-        message.getUpdatedAt();
+        message.setUpdatedAt(System.currentTimeMillis());
+        messageRepo.save(message);
         return message;
     }
 
-    @Override
     public Message findMessageById(UUID messageId) {
-        Message message = messageStore.get(messageId);
-        if(message == null){
-            throw new IllegalArgumentException("해당 메세지를 찾을 수 없습니다");
-        }
-
-        return messageStore.get(messageId);
+        return messageRepo.findById(messageId);
     }
 
     public List<Message> findMessageByUserId(UUID userId){
-        User user =  userService.findUserById(userId);
-
-        return messageStore.values().stream()
-                .filter(message -> message.getUserId().equals(userId))
-                .toList();
+        userService.findUserById(userId);
+        return messageRepo.findByUserId(userId);
     }
 
     public List<Message> findMessageByChannelId(UUID channelId) {
-        Channel channel = channelService.findChannelById(channelId);
-
-        return messageStore.values().stream()
-                .filter(message -> message.getChannelId().equals(channelId))
-                .toList();
+        channelService.findChannelById(channelId);
+        return messageRepo.findByChannelId(channelId);
     }
 
     public void deleteMessage(UUID messageId){
         Message message = findMessageById(messageId);
         channelService.removeMessage(message.getChannelId(), messageId);
-        messageStore.remove(messageId);
+        messageRepo.deleteById(messageId);
     }
+
 }

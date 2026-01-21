@@ -1,8 +1,10 @@
 package com.sprint.mission.discodeit.entity;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public abstract class BaseEntity {
+public abstract class BaseEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final UUID id;
     private final long createdAt;
     private long updatedAt;
@@ -25,4 +27,7 @@ public abstract class BaseEntity {
         this.updatedAt = updatedAt;
     }
 
+    protected long createdAt() {
+        return createdAt;
+    }
 }

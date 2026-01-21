@@ -1,51 +1,54 @@
-package com.sprint.mission.discodeit.service.jcf;
+package com.sprint.mission.discodeit.service.file;
 
 import com.sprint.mission.discodeit.entity.User;
+import com.sprint.mission.discodeit.repository.UserRepository;
 import com.sprint.mission.discodeit.service.UserService;
 
-import java.time.LocalDate;
+import java.io.*;
 import java.util.*;
 
-public class JCFUserService implements UserService {
-    private final Map<UUID, User> userStore;
+public class FileUserService implements UserService {
+    private final UserRepository userRepo;
 
-    public JCFUserService(){
-        this.userStore = new HashMap<>();
+    public FileUserService(UserRepository userRepo){
+        this.userRepo = userRepo;
     }
 
     public User registerUser(String name, String email, java.time.LocalDate birthDate, String phoneNumber, String password){
-            if(userStore.values().stream()
-                    .anyMatch(u -> u.getEmail().equals(email))) {
-                throw new IllegalArgumentException("다른 유저가 사용 중인 이메일입니다");
-            }
-
-            User newUser = new User(name, email, birthDate, phoneNumber, password);
-            userStore.put(newUser.getId(), newUser);
-            return newUser;
-        }
-     public User findUserById(UUID userId) {
-         User user = userStore.get(userId);
-         if(user == null){
-             throw new IllegalArgumentException("해당 유저를 찾을 수 없습니다");
-         }
-
-            return user;
+        List<User> user = userRepo.findAll();
+        if(user.stream()
+                .anyMatch(u -> u.getEmail().equals(email))) {
+            throw new IllegalArgumentException("다른 유저가 사용 중인 이메일입니다");
         }
 
-    @Override
+        User newUser = new User(name, email, birthDate, phoneNumber, password);
+        userRepo.save(newUser);
+        return newUser;
+    }
+
+    public User findUserById(UUID userId) {
+        User user = userRepo.findById(userId);
+        if(user == null){
+            throw new IllegalArgumentException("해당 유저를 찾을 수 없습니다");
+        }
+        return user;
+    }
+
     public List<User> findAllUser() {
-        return new ArrayList<>(userStore.values());
+        return userRepo.findAll();
     }
 
     public void deleteUser(UUID userId){
         User user = findUserById(userId);
-        userStore.remove(userId);
-        }
+        userRepo.delete(userId);
+    }
 
-    public int userCount () {return userStore.size();}
+    public int userCount () {
+        return userRepo.findAll().size();
+    }
 
     public User updateUser(UUID userId, String name, String email, String phoneNumber, String password ){
-        User user = findUserById(userId);
+        User user = userRepo.findById(userId);
 
         Optional.ofNullable(name)
                 .ifPresent(n-> {
@@ -61,7 +64,7 @@ public class JCFUserService implements UserService {
                         throw new IllegalArgumentException("현재 사용 중인 이메일입니다");
                     }
 
-                    if (userStore.values().stream()
+                    if (userRepo.findAll().stream()
                             .anyMatch(u -> !u.getId().equals(userId) && u.getEmail().equals(e))) {
                         throw new IllegalArgumentException("다른 유저가 사용 중인 이메일입니다");
                     }
@@ -83,8 +86,7 @@ public class JCFUserService implements UserService {
                     }
                     user.setPassword(password);
                 });
-
+        userRepo.save(user);
         return user;
     }
-
 }

@@ -1,14 +1,16 @@
 package com.sprint.mission.discodeit.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String name;
     private String email;
     private final LocalDate birthDate; // 수정불가능
     private String phoneNumber;
-    private String password;
+    private transient String password;
 
 
     public User(String name, String email, LocalDate birthDate , String phoneNumber, String password){
