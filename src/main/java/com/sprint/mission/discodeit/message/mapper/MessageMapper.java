@@ -14,7 +14,7 @@ public class MessageMapper {
                 message.getContent(),
                 message.getChannelId(),
                 message.getAuthorId(),
-                message.getAttachments()
+                message.getAttachmentIds()
         );
     }
 

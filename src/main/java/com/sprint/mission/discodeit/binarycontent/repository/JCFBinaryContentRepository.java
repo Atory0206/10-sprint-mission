@@ -9,8 +9,9 @@ public class JCFBinaryContentRepository implements BinaryContentRepository {
     private final Map<UUID, BinaryContent> data = new HashMap<>();
 
     @Override
-    public void save(BinaryContent binaryContent) {
+    public BinaryContent save(BinaryContent binaryContent) {
         data.put(binaryContent.getId(),binaryContent);
+        return binaryContent;
     }
 
     @Override
@@ -21,6 +22,11 @@ public class JCFBinaryContentRepository implements BinaryContentRepository {
     @Override
     public void deleteById(UUID id) {
         data.remove(id);
+    }
+
+    @Override
+    public List<BinaryContent> findAllByIdIn(List<UUID> ids) {
+        return List.of();
     }
 }
 

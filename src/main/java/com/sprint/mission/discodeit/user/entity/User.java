@@ -1,6 +1,5 @@
 package com.sprint.mission.discodeit.user.entity;
 
-import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,21 +18,20 @@ public class User implements Serializable {
     private String email;
     private String password;
     private @Setter UserStatus userStatus;
-    private BinaryContentResponse profileImage;
     private UUID profileId;
 
 
-    public User(String username, String email, String password, BinaryContentResponse profileImage) {
+    public User(String username, String email, String password, UUID profileId) {
         this.id = UUID.randomUUID();
         this.createdAt = Instant.now();
         //
         this.username = username;
         this.email = email;
         this.password = password;
-        this.profileImage = profileImage;
+        this.profileId = profileId;
     }
 
-    public void update(String newUsername, String newEmail, String newPassword, BinaryContentResponse profileImage) {
+    public void update(String newUsername, String newEmail, String newPassword, UUID newProfileId) {
         boolean anyValueUpdated = false;
         if (newUsername != null && !newUsername.equals(this.username)) {
             this.username = newUsername;
@@ -48,8 +46,8 @@ public class User implements Serializable {
             anyValueUpdated = true;
         }
 
-        if(profileImage != null && !profileImage.equals(this.profileImage)){
-            this.profileImage = profileImage;
+        if(newProfileId != null && !newProfileId.equals(this.profileId)){
+            this.profileId = newProfileId;
             anyValueUpdated = true;
         }
 

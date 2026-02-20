@@ -13,7 +13,9 @@ import com.sprint.mission.discodeit.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 
@@ -27,23 +29,27 @@ public class BasicReadStatusService implements ReadStatusService {
 
 
     @Override
-    public ReadStatusResponse create (ReadStatusCreateRequest request){
-        User user = userRepository
-                .findById(request.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public ReadStatus create (ReadStatusCreateRequest request){
+        UUID userId = request.userId();
+        UUID channelId = request.channelId();
 
-        Channel channel = channelRepository
-                .findById(request.channelId())
-                .orElseThrow(() -> new IllegalArgumentException("Channel not found"));
+        if (!userRepository.existsById(userId)) {
+            throw new NoSuchElementException("User with id " + userId + " does not exist");
+        }
+        if (!channelRepository.existsById(channelId)) {
+            throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
+        }
 
-        readStatusRepository.findByUserAndChannelId(request.userId(), request.channelId())
-                .ifPresent(readStatus -> {
-                    throw new IllegalArgumentException("이미 읽음 객체가 존재합니다.");
-                });
-
-        ReadStatus readStatus = new ReadStatus(request.userId(), request.channelId());
-        readStatusRepository.save(readStatus);
-        return readStatusMapper.convertToResponse(readStatus);
+        return readStatusRepository.findAllByUserId(userId).stream()
+                .filter(readStatus -> readStatus.getChannelId().equals(channelId))
+                .findFirst()
+                .orElseGet(
+                        () -> {
+                            Instant lastReadAt = request.lastReadAt();
+                            ReadStatus readStatus = new ReadStatus(userId, channelId, lastReadAt);
+                            return readStatusRepository.save(readStatus);
+                        }
+                );
     }
 
     @Override
@@ -55,22 +61,20 @@ public class BasicReadStatusService implements ReadStatusService {
     }
 
     @Override
-    public List<ReadStatusResponse> findAllByUserId(UUID userId) {
-       return    readStatusRepository.findAll()
-                .stream()
-               .filter(rs -> rs.getUserId().equals(userId))
-               .map(readStatusMapper::convertToResponse).toList();
+    public List<ReadStatus> findAllByUserId(UUID userId) {
+        return readStatusRepository.findAllByUserId(userId).stream()
+                .toList();
 
     }
 
     @Override
-    public ReadStatusResponse update(ReadStatusUpdateRequest request) {
-        ReadStatus readStatus = readStatusRepository.findById(request.id())
+    public ReadStatus update(UUID readStatusId ,ReadStatusUpdateRequest request) {
+        Instant newLastReadAt = request.newLastReadAt();
+        ReadStatus readStatus = readStatusRepository.findById(readStatusId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 읽음 객체가 존재하지 않습니다"));
 
         readStatus.updateLastRead();
-        readStatusRepository.save(readStatus);
-        return readStatusMapper.convertToResponse(readStatus);
+        return readStatusRepository.save(readStatus);
     }
 
     @Override

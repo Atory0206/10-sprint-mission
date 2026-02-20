@@ -16,32 +16,27 @@ public class Channel implements Serializable {
     private ChannelType type;
     private String name;
     private String description;
-    private UUID ownerId;
+
     private List<UUID> participantUserIds = new ArrayList<>();
 
 
-    public Channel(ChannelType type, String name, String description, UUID ownerId) {
+    public Channel(ChannelType type, String name, String description) {
         this.id = UUID.randomUUID();
         this.createdAt = Instant.now();
         this.type = type;
         this.name = name;
         this.description = description;
-        this.ownerId = ownerId;
-        this.participantUserIds.add(this.ownerId);
+
     }
 
     public Channel(ChannelType type, String name , String description,
-                   List<UUID> userList, UUID ownerId) {
+                   List<UUID> userList) {
         this.id = UUID.randomUUID();
         this.createdAt = Instant.now();
         this.type = type;
         this.name = name;
         this.description = description;
-        this.ownerId = ownerId;
         this.participantUserIds = new ArrayList<>(userList);
-        if (!this.participantUserIds.contains(ownerId)) {
-            this.participantUserIds.add(ownerId);
-        }
     }
 
     public void update(String newName, String newDescription) {

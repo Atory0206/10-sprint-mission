@@ -6,30 +6,42 @@ import com.sprint.mission.discodeit.message.dto.ReadStatusUpdateRequest;
 import com.sprint.mission.discodeit.message.entity.ReadStatus;
 import com.sprint.mission.discodeit.message.service.ReadStatusService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/messagereadstatuses")
+@RequestMapping("/api/readStatus")
 @RequiredArgsConstructor
 public class ReadStatusController {
 
     private final ReadStatusService readStatusService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public ReadStatusResponse createReadStatus (@RequestBody ReadStatusCreateRequest request){
-        return readStatusService.create(request);
+    public ResponseEntity<ReadStatus> createReadStatus (@RequestBody ReadStatusCreateRequest request){
+        ReadStatus readStatus = readStatusService.create(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(readStatus);
     }
 
     @RequestMapping(method = RequestMethod.PATCH)
-    public ReadStatusResponse updateReadStatus (@RequestBody ReadStatusUpdateRequest request) {
-        return readStatusService.update(request);
+    public ResponseEntity<ReadStatus> updateReadStatus (@RequestParam UUID readStatusId,
+            @RequestBody ReadStatusUpdateRequest request) {
+        ReadStatus readStatus = readStatusService.update(readStatusId,request);
+        return  ResponseEntity.
+                status(HttpStatus.OK)
+                .body(readStatus);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<ReadStatusResponse> getByUserId(@RequestParam(name = "users") UUID id) {
-        return readStatusService.findAllByUserId(id);
+    public ResponseEntity<List<ReadStatus>> findAllByUserId(@RequestParam(name = "userId") UUID id) {
+        List<ReadStatus> readStatuses = readStatusService.findAllByUserId(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(readStatuses);
     }
 }

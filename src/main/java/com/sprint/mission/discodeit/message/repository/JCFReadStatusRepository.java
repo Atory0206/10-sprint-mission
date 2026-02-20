@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.message.repository;
 
 import com.sprint.mission.discodeit.message.entity.ReadStatus;
+import lombok.Locked;
 
 import java.util.*;
 
@@ -9,8 +10,9 @@ public class JCFReadStatusRepository implements ReadStatusRepository {
     private final Map<UUID, ReadStatus> data = new HashMap<>();
 
     @Override
-    public void save(ReadStatus readStatus) {
+    public ReadStatus save(ReadStatus readStatus) {
         data.put(readStatus.getId(),readStatus);
+        return readStatus;
     }
 
     @Override
@@ -23,12 +25,16 @@ public class JCFReadStatusRepository implements ReadStatusRepository {
         return data.values().stream().toList();
     }
 
+
+
     @Override
-    public Optional<ReadStatus> findByUserAndChannelId(UUID userId, UUID channelId) {
-        return data.values().stream()
-                .filter(rs-> rs.getUserId().equals(userId))
-                .filter(rs->rs.getChannelId().equals(channelId))
-                .findFirst();
+    public List<ReadStatus> findAllByUserId(UUID userId) {
+        return List.of();
+    }
+
+    @Override
+    public List<ReadStatus> findAllByChannelId(UUID channelId) {
+        return List.of();
     }
 
     @Override

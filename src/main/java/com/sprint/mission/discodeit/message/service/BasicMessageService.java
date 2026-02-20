@@ -1,5 +1,7 @@
 package com.sprint.mission.discodeit.message.service;
 
+import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
+import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageResponse;
 import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
@@ -28,18 +30,33 @@ public class BasicMessageService implements MessageService {
     private final MessageMapper messageMapper;
 
     @Override
-    public MessageResponse create(MessageCreateRequest request) {
-        Channel channel = channelRepository
-                .findById(request.channelId())
-                .orElseThrow(() -> new IllegalArgumentException("Channel not found"));
+    public Message create(MessageCreateRequest request,
+                          List<BinaryContentCreateRequest> binaryContentCreateRequests) {
+        UUID channelId = request.channelId();
+        UUID authorId = request.authorId();
 
-        User user = userRepository
-                .findById(request.authorId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if (!channelRepository.existsById(channelId)) {
+            throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
+        }
+        if (!userRepository.existsById(authorId)) {
+            throw new NoSuchElementException("Author with id " + authorId + " does not exist");
+        }
 
-        Message message = new Message(request.content(), request.channelId(), request.authorId());
-        Message savedMessage = messageRepository.save(message);
-        return messageMapper.convertToResponse(savedMessage);
+        List<UUID> attachmentIds = binaryContentCreateRequests.stream()
+                .map(attachmentRequest -> {
+                    String fileName = attachmentRequest.fileName();
+                    String contentType = attachmentRequest.contentType();
+                    byte[] bytes = attachmentRequest.bytes();
+
+                    BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
+                            contentType, bytes);
+                    BinaryContent createdBinaryContent = binaryContentRepository.save(binaryContent);
+                    return createdBinaryContent.getId();
+                })
+                .toList();
+
+        Message message = new Message(request.content(), request.channelId(), request.authorId(), request.attachmentIds());
+        return messageRepository.save(message);
     }
 
     @Override
@@ -49,27 +66,23 @@ public class BasicMessageService implements MessageService {
     }
 
     @Override
-    public Optional<Message> findByChannelId(UUID channelId) {
-        return messageRepository.findAll().stream()
-                .filter(m -> m.getChannelId().equals(channelId))
-                .max(Comparator.comparing(Message::getUpdatedAt));
+    public List<Message> findByChannelId(UUID channelId) {
+        return messageRepository.findByChannelId(channelId).stream()
+                .toList();
     }
 
     @Override
-    public List<MessageResponse> findAllByChannelId(UUID channelId) {
+    public List<Message> findAllByChannelId(UUID channelId) {
         List<Message> messages = messageRepository.findByChannelId(channelId);
-        return messages.stream()
-                .map(messageMapper::convertToResponse).toList();
+        return messages;
     }
 
     @Override
-    public MessageResponse update(MessageUpdateRequest request) {
-        Message message = messageRepository.findById(request.messageId())
+    public Message update(UUID messageId,MessageUpdateRequest request) {
+        Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new NoSuchElementException("Message not found"));
         message.update(request.content());
-         message.setAttachments(request.attachments());
-        messageRepository.save(message);
-        return messageMapper.convertToResponse(message);
+        return messageRepository.save(message);
     }
 
     @Override
@@ -77,11 +90,10 @@ public class BasicMessageService implements MessageService {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new NoSuchElementException("Message not found"));
 
-        if (message.getAttachments() != null) {
-            message.getAttachments().forEach(attachment -> {
-                binaryContentRepository.deleteById(attachment.binaryContentId());
-            });
-        }
+        if (message.getAttachmentIds() != null) {
+            message.getAttachmentIds().forEach(binaryContentRepository::deleteById);
+            };
         messageRepository.deleteById(messageId);
+        }
+
     }
-}

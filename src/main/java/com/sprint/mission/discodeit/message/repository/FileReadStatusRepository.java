@@ -33,7 +33,7 @@ public class FileReadStatusRepository implements ReadStatusRepository {
     }
 
     @Override
-    public void save(ReadStatus readStatus) {
+    public ReadStatus save(ReadStatus readStatus) {
         Path path = resolvePath(readStatus.getId());
         try (
                 FileOutputStream fos = new FileOutputStream(path.toFile());
@@ -43,6 +43,8 @@ public class FileReadStatusRepository implements ReadStatusRepository {
         } catch (IOException e) {
             throw new RuntimeException("ReadStatus 저장 실패 ID: " + readStatus.getId() , e);
         }
+
+        return readStatus;
     }
 
     @Override
@@ -84,7 +86,7 @@ public class FileReadStatusRepository implements ReadStatusRepository {
     }
 
     @Override
-    public Optional<ReadStatus> findByUserAndChannelId(UUID userId, UUID channelId) {
+    public List<ReadStatus> findAllByUserId(UUID userId) {
         try (Stream<Path> paths = Files.list(DIRECTORY)) {
             return paths
                     .filter(path -> path.toString().endsWith(EXTENSION))
@@ -95,15 +97,35 @@ public class FileReadStatusRepository implements ReadStatusRepository {
                         ) {
                             return (ReadStatus) ois.readObject();
                         } catch (IOException | ClassNotFoundException e) {
-                            throw new RuntimeException("ReadStatus 역직렬화 실패: " + path, e);
+                            throw new RuntimeException(e);
                         }
                     })
-                    .filter(Objects::nonNull)
-                    .filter(rs -> rs.getUserId().equals(userId) && rs.getChannelId().equals(channelId))
-                    .findFirst();
-
+                    .filter(readStatus -> readStatus.getUserId().equals(userId))
+                    .toList();
         } catch (IOException e) {
-            throw new RuntimeException("데이터 조회 중 오류 발생", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<ReadStatus> findAllByChannelId(UUID channelId) {
+        try (Stream<Path> paths = Files.list(DIRECTORY)) {
+            return paths
+                    .filter(path -> path.toString().endsWith(EXTENSION))
+                    .map(path -> {
+                        try (
+                                FileInputStream fis = new FileInputStream(path.toFile());
+                                ObjectInputStream ois = new ObjectInputStream(fis)
+                        ) {
+                            return (ReadStatus) ois.readObject();
+                        } catch (IOException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .filter(readStatus -> readStatus.getChannelId().equals(channelId))
+                    .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

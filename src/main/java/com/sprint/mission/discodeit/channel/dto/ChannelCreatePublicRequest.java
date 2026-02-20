@@ -5,9 +5,7 @@ import com.sprint.mission.discodeit.channel.entity.ChannelType;
 import java.util.UUID;
 
 public record ChannelCreatePublicRequest(
-        ChannelType type,
         String name,
-        String description,
-        UUID ownerId
+        String description
 ) {
 }
