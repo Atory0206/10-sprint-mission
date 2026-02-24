@@ -22,63 +22,64 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BasicReadStatusService implements ReadStatusService {
-    private final UserRepository userRepository;
-    private final ChannelRepository channelRepository;
-    private final ReadStatusRepository readStatusRepository;
-    private final ReadStatusMapper readStatusMapper;
+
+  private final UserRepository userRepository;
+  private final ChannelRepository channelRepository;
+  private final ReadStatusRepository readStatusRepository;
+  private final ReadStatusMapper readStatusMapper;
 
 
-    @Override
-    public ReadStatus create (ReadStatusCreateRequest request){
-        UUID userId = request.userId();
-        UUID channelId = request.channelId();
+  @Override
+  public ReadStatus create(ReadStatusCreateRequest request) {
+    UUID userId = request.userId();
+    UUID channelId = request.channelId();
 
-        if (!userRepository.existsById(userId)) {
-            throw new NoSuchElementException("User with id " + userId + " does not exist");
-        }
-        if (!channelRepository.existsById(channelId)) {
-            throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
-        }
-
-        return readStatusRepository.findAllByUserId(userId).stream()
-                .filter(readStatus -> readStatus.getChannelId().equals(channelId))
-                .findFirst()
-                .orElseGet(
-                        () -> {
-                            Instant lastReadAt = request.lastReadAt();
-                            ReadStatus readStatus = new ReadStatus(userId, channelId, lastReadAt);
-                            return readStatusRepository.save(readStatus);
-                        }
-                );
+    if (!userRepository.existsById(userId)) {
+      throw new NoSuchElementException("User with id " + userId + " does not exist");
+    }
+    if (!channelRepository.existsById(channelId)) {
+      throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
     }
 
-    @Override
-    public ReadStatusResponse find(UUID id) {
-        ReadStatus readStatus = readStatusRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 읽음 객체가 존재하지 않습니다"));
+    return readStatusRepository.findAllByUserId(userId).stream()
+        .filter(readStatus -> readStatus.getChannelId().equals(channelId))
+        .findFirst()
+        .orElseGet(
+            () -> {
+              Instant lastReadAt = request.lastReadAt();
+              ReadStatus readStatus = new ReadStatus(userId, channelId, lastReadAt);
+              return readStatusRepository.save(readStatus);
+            }
+        );
+  }
 
-        return readStatusMapper.convertToResponse(readStatus);
-    }
+  @Override
+  public ReadStatusResponse find(UUID id) {
+    ReadStatus readStatus = readStatusRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("해당 읽음 객체가 존재하지 않습니다"));
 
-    @Override
-    public List<ReadStatus> findAllByUserId(UUID userId) {
-        return readStatusRepository.findAllByUserId(userId).stream()
-                .toList();
+    return readStatusMapper.convertToResponse(readStatus);
+  }
 
-    }
+  @Override
+  public List<ReadStatus> findAllByUserId(UUID userId) {
+    return readStatusRepository.findAllByUserId(userId).stream()
+        .toList();
 
-    @Override
-    public ReadStatus update(UUID readStatusId ,ReadStatusUpdateRequest request) {
-        Instant newLastReadAt = request.newLastReadAt();
-        ReadStatus readStatus = readStatusRepository.findById(readStatusId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 읽음 객체가 존재하지 않습니다"));
+  }
 
-        readStatus.updateLastRead();
-        return readStatusRepository.save(readStatus);
-    }
+  @Override
+  public ReadStatus update(UUID readStatusId, ReadStatusUpdateRequest request) {
+    Instant newLastReadAt = request.newLastReadAt();
+    ReadStatus readStatus = readStatusRepository.findById(readStatusId)
+        .orElseThrow(() -> new IllegalArgumentException("해당 읽음 객체가 존재하지 않습니다"));
 
-    @Override
-    public void delete(UUID id) {
-        readStatusRepository.deleteById(id);
-    }
+    readStatus.updateLastRead();
+    return readStatusRepository.save(readStatus);
+  }
+
+  @Override
+  public void delete(UUID id) {
+    readStatusRepository.deleteById(id);
+  }
 }

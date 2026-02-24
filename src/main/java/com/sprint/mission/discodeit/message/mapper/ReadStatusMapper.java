@@ -6,12 +6,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReadStatusMapper {
-    public ReadStatusResponse convertToResponse(ReadStatus readStatus){
-        return new ReadStatusResponse(
-                readStatus.getId(),
-                readStatus.getUserId(),
-                readStatus.getChannelId(),
-                readStatus.getLastReadAt()
-        );
-    }
+
+  public ReadStatusResponse convertToResponse(ReadStatus readStatus) {
+    return new ReadStatusResponse(
+        readStatus.getId(),
+        readStatus.getUserId(),
+        readStatus.getChannelId(),
+        readStatus.getLastReadAt()
+    );
+  }
 }

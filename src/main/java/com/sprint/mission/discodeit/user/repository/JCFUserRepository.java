@@ -6,38 +6,40 @@ import java.util.*;
 
 
 public class JCFUserRepository implements UserRepository {
-    private final Map<UUID, User> data = new HashMap<>();;
 
-    @Override
-    public User save(User user) {
-       this.data.put(user.getId(), user);
-        return user;
-    }
+  private final Map<UUID, User> data = new HashMap<>();
+  ;
 
-    @Override
-   public Optional<User> findById(UUID id) {
-        return Optional.ofNullable(this.data.get(id));
-    }
+  @Override
+  public User save(User user) {
+    this.data.put(user.getId(), user);
+    return user;
+  }
 
-    @Override
-    public Optional<User> findByUsername(String name) {
-        return data.values().stream()
-                .filter(u -> u.getUsername().equals(name))
-                .findFirst();
-    }
+  @Override
+  public Optional<User> findById(UUID id) {
+    return Optional.ofNullable(this.data.get(id));
+  }
 
-    @Override
-    public List<User> findAll() {
-        return this.data.values().stream().toList();
-    }
+  @Override
+  public Optional<User> findByUsername(String name) {
+    return data.values().stream()
+        .filter(u -> u.getUsername().equals(name))
+        .findFirst();
+  }
 
-    @Override
-    public boolean existsById(UUID id) {
-        return this.data.containsKey(id);
-    }
+  @Override
+  public List<User> findAll() {
+    return this.data.values().stream().toList();
+  }
 
-     @Override
-   public void deleteById(UUID id) {
-       this.data.remove(id);
-   }
+  @Override
+  public boolean existsById(UUID id) {
+    return this.data.containsKey(id);
+  }
+
+  @Override
+  public void deleteById(UUID id) {
+    this.data.remove(id);
+  }
 }

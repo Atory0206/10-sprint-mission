@@ -11,11 +11,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface MessageService {
-    Message create(MessageCreateRequest request,
-                   List<BinaryContentCreateRequest> binaryContentCreateRequests);
-    Message find(UUID messageId);
-    List<Message> findByChannelId(UUID channelId);
-    List<Message> findAllByChannelId(UUID channelId);
-    Message update(UUID messageId,MessageUpdateRequest request);
-    void delete(UUID messageId);
+
+  Message create(MessageCreateRequest request,
+      List<BinaryContentCreateRequest> binaryContentCreateRequests);
+
+  Message find(UUID messageId);
+
+  List<Message> findByChannelId(UUID channelId);
+
+  List<Message> findAllByChannelId(UUID channelId);
+
+  Message update(UUID messageId, MessageUpdateRequest request);
+
+  void delete(UUID messageId);
 }

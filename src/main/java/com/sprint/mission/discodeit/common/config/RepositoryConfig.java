@@ -22,85 +22,85 @@ import org.springframework.context.annotation.Configuration;
 public class RepositoryConfig {
 
 
-        // YAML 파일의 discodeit.repository.file-directory 값을 읽어옵니다.
-        @Value("${discodeit.repository.file-directory}")
-        private String fileDirectory;
+  // YAML 파일의 discodeit.repository.file-directory 값을 읽어옵니다.
+  @Value("${discodeit.repository.file-directory}")
+  private String fileDirectory;
 
-        // --- 1. User Repository ---
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
-        public UserRepository fileUserRepository() {
-            return new FileUserRepository(fileDirectory);
-        }
+  // --- 1. User Repository ---
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
+  public UserRepository fileUserRepository() {
+    return new FileUserRepository(fileDirectory);
+  }
 
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
-        public UserRepository jcfUserRepository() {
-            return new JCFUserRepository();
-        }
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
+  public UserRepository jcfUserRepository() {
+    return new JCFUserRepository();
+  }
 
-        // --- 2. UserStatus Repository ---
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
-        public UserStatusRepository fileUserStatusRepository() {
-            return new FileUserStatusRepository(fileDirectory);
-        }
+  // --- 2. UserStatus Repository ---
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
+  public UserStatusRepository fileUserStatusRepository() {
+    return new FileUserStatusRepository(fileDirectory);
+  }
 
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
-        public UserStatusRepository jcfUserStatusRepository() {
-            return new JCFUserStatusRepository();
-        }
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
+  public UserStatusRepository jcfUserStatusRepository() {
+    return new JCFUserStatusRepository();
+  }
 
-        // --- 3. Channel Repository ---
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
-        public ChannelRepository fileChannelRepository() {
-            return new FileChannelRepository(fileDirectory);
-        }
+  // --- 3. Channel Repository ---
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
+  public ChannelRepository fileChannelRepository() {
+    return new FileChannelRepository(fileDirectory);
+  }
 
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
-        public ChannelRepository jcfChannelRepository() {
-            return new JCFChannelRepository();
-        }
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
+  public ChannelRepository jcfChannelRepository() {
+    return new JCFChannelRepository();
+  }
 
-        // --- 4. Message Repository ---
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
-        public MessageRepository fileMessageRepository() {
-            return new FileMessageRepository(fileDirectory);
-        }
+  // --- 4. Message Repository ---
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
+  public MessageRepository fileMessageRepository() {
+    return new FileMessageRepository(fileDirectory);
+  }
 
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
-        public MessageRepository jcfMessageRepository() {
-            return new JCFMessageRepository();
-        }
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
+  public MessageRepository jcfMessageRepository() {
+    return new JCFMessageRepository();
+  }
 
-        // --- 5. BinaryContent Repository ---
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
-        public BinaryContentRepository fileBinaryContentRepository() {
-            return new FileBinaryContentRepository(fileDirectory);
-        }
+  // --- 5. BinaryContent Repository ---
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
+  public BinaryContentRepository fileBinaryContentRepository() {
+    return new FileBinaryContentRepository(fileDirectory);
+  }
 
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
-        public BinaryContentRepository jcfBinaryContentRepository() {
-            return new JCFBinaryContentRepository();
-        }
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
+  public BinaryContentRepository jcfBinaryContentRepository() {
+    return new JCFBinaryContentRepository();
+  }
 
-        // --- 6. ReadStatus Repository ---
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
-        public ReadStatusRepository fileReadStatusRepository() {
-            return new FileReadStatusRepository(fileDirectory);
-        }
+  // --- 6. ReadStatus Repository ---
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "file")
+  public ReadStatusRepository fileReadStatusRepository() {
+    return new FileReadStatusRepository(fileDirectory);
+  }
 
-        @Bean
-        @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
-        public ReadStatusRepository jcfReadStatusRepository() {
-            return new JCFReadStatusRepository();
-        }
+  @Bean
+  @ConditionalOnProperty(name = "discodeit.repository.type", havingValue = "jcf", matchIfMissing = true)
+  public ReadStatusRepository jcfReadStatusRepository() {
+    return new JCFReadStatusRepository();
+  }
 }

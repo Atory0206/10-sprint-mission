@@ -6,27 +6,28 @@ import java.util.*;
 
 
 public class JCFBinaryContentRepository implements BinaryContentRepository {
-    private final Map<UUID, BinaryContent> data = new HashMap<>();
 
-    @Override
-    public BinaryContent save(BinaryContent binaryContent) {
-        data.put(binaryContent.getId(),binaryContent);
-        return binaryContent;
-    }
+  private final Map<UUID, BinaryContent> data = new HashMap<>();
 
-    @Override
-    public Optional<BinaryContent> findById(UUID id) {
-        return Optional.ofNullable(data.get(id));
-    }
+  @Override
+  public BinaryContent save(BinaryContent binaryContent) {
+    data.put(binaryContent.getId(), binaryContent);
+    return binaryContent;
+  }
 
-    @Override
-    public void deleteById(UUID id) {
-        data.remove(id);
-    }
+  @Override
+  public Optional<BinaryContent> findById(UUID id) {
+    return Optional.ofNullable(data.get(id));
+  }
 
-    @Override
-    public List<BinaryContent> findAllByIdIn(List<UUID> ids) {
-        return List.of();
-    }
+  @Override
+  public void deleteById(UUID id) {
+    data.remove(id);
+  }
+
+  @Override
+  public List<BinaryContent> findAllByIdIn(List<UUID> ids) {
+    return List.of();
+  }
 }
 

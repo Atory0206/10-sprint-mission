@@ -11,9 +11,14 @@ import java.util.UUID;
 
 @Service
 public interface ReadStatusService {
-    ReadStatus create(ReadStatusCreateRequest request);
-    ReadStatusResponse find(UUID id);
-    List<ReadStatus> findAllByUserId(UUID userId);
-    ReadStatus update(UUID readStatusId ,ReadStatusUpdateRequest request);
-    void delete(UUID id);
+
+  ReadStatus create(ReadStatusCreateRequest request);
+
+  ReadStatusResponse find(UUID id);
+
+  List<ReadStatus> findAllByUserId(UUID userId);
+
+  ReadStatus update(UUID readStatusId, ReadStatusUpdateRequest request);
+
+  void delete(UUID id);
 }

@@ -3,8 +3,9 @@ package com.sprint.mission.discodeit.user.dto;
 import java.util.UUID;
 
 public record UserUpdateRequest(
-        String newUsername,
-        String newEmail,
-        String newPassword
+    String newUsername,
+    String newEmail,
+    String newPassword
 ) {
+
 }

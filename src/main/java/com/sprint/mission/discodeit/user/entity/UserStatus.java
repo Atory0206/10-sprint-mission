@@ -8,31 +8,32 @@ import java.util.UUID;
 
 @Getter
 public class UserStatus implements Serializable {
-    private static final long serialVersionUID = 1L;
 
-    private UUID id;
-    private Instant createdAt;
-    private Instant updatedAt;
+  private static final long serialVersionUID = 1L;
 
-    private UUID userId;
-    private Instant lastConnectedAt;
+  private UUID id;
+  private Instant createdAt;
+  private Instant updatedAt;
 
-    public UserStatus(UUID userId) {
-        this.id = UUID.randomUUID();
-        this.userId = userId;
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-        this.lastConnectedAt = Instant.now();
-    }
+  private UUID userId;
+  private Instant lastActiveAt;
 
-    public void updateConnection() {
-        this.lastConnectedAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
+  public UserStatus(UUID userId) {
+    this.id = UUID.randomUUID();
+    this.userId = userId;
+    this.createdAt = Instant.now();
+    this.updatedAt = Instant.now();
+    this.lastActiveAt = Instant.now();
+  }
 
-    public boolean isConnected(){
-        return lastConnectedAt != null &&
-                (Instant.now().getEpochSecond() - lastConnectedAt.getEpochSecond() <= 300);
-    }
+  public void updateConnection() {
+    this.lastActiveAt = Instant.now();
+    this.updatedAt = Instant.now();
+  }
+
+  public boolean isOnline() {
+    return lastActiveAt != null &&
+        (Instant.now().getEpochSecond() - lastActiveAt.getEpochSecond() <= 300);
+  }
 
 }

@@ -14,43 +14,44 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BasicBinaryContentService implements BinaryContentService {
-    private final BinaryContentRepository binaryContentRepository;
 
-    @Override
-    public BinaryContent create(BinaryContentCreateRequest request) {
-        String fileName = request.fileName();
-        byte[] bytes = request.bytes();
-        String contentType = request.contentType();
-        BinaryContent binaryContent = new BinaryContent(
-                fileName,
-                (long) bytes.length,
-                contentType,
-                bytes);
+  private final BinaryContentRepository binaryContentRepository;
 
-        return binaryContentRepository.save(binaryContent);
-    }
+  @Override
+  public BinaryContent create(BinaryContentCreateRequest request) {
+    String fileName = request.fileName();
+    byte[] bytes = request.bytes();
+    String contentType = request.contentType();
+    BinaryContent binaryContent = new BinaryContent(
+        fileName,
+        (long) bytes.length,
+        contentType,
+        bytes);
 
-    @Override
-    public BinaryContent find(UUID binaryContentId) {
-        return binaryContentRepository.findById(binaryContentId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "BinaryContent with id " + binaryContentId + " not found"));
-    }
+    return binaryContentRepository.save(binaryContent);
+  }
 
-    @Override
-    public BinaryContent findById(UUID id) {
-        return binaryContentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("바이너리컨텐트 객체를 찾을 수 없습니다."));
-    }
+  @Override
+  public BinaryContent find(UUID binaryContentId) {
+    return binaryContentRepository.findById(binaryContentId)
+        .orElseThrow(() -> new NoSuchElementException(
+            "BinaryContent with id " + binaryContentId + " not found"));
+  }
 
-    @Override
-    public List<BinaryContent> findAllByIdIn(List<UUID> ids) {
-        return binaryContentRepository.findAllByIdIn(ids).stream()
-                .toList();
-    }
+  @Override
+  public BinaryContent findById(UUID id) {
+    return binaryContentRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("바이너리컨텐트 객체를 찾을 수 없습니다."));
+  }
 
-    @Override
-    public void delete(UUID id) {
-        binaryContentRepository.deleteById(id);
-    }
+  @Override
+  public List<BinaryContent> findAllByIdIn(List<UUID> ids) {
+    return binaryContentRepository.findAllByIdIn(ids).stream()
+        .toList();
+  }
+
+  @Override
+  public void delete(UUID id) {
+    binaryContentRepository.deleteById(id);
+  }
 }

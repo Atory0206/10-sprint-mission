@@ -14,23 +14,19 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final UserStatusService userStatusService;
-    private final UserStatusRepository userStatusRepository;
 
-    public User login(UserLoginRequest request){
-        User user = userRepository.findByUsername(request.username())
-                .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다"));
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final UserStatusService userStatusService;
+  private final UserStatusRepository userStatusRepository;
 
-        if(!passwordEncoder.matches(request.password(), user.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+  public User login(UserLoginRequest request) {
+    User user = userRepository.findByUsername(request.username())
+        .orElseThrow(() -> new NoSuchElementException("해당 유저를 찾을 수 없습니다"));
 
-        userStatusService.updateByUserId(user.getId());
-        userStatusRepository.findByUserId(user.getId())
-                .ifPresent(user::setUserStatus);
-
-         return user;
+    if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
+    return user;
+  }
 }
