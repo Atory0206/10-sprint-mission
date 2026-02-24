@@ -12,19 +12,24 @@ import java.util.NoSuchElementException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler({IllegalArgumentException.class, MethodArgumentTypeMismatchException.class,
-      NoSuchElementException.class})
+  @ExceptionHandler({IllegalArgumentException.class, MethodArgumentTypeMismatchException.class})
   public ResponseEntity<ErrorResponse> handleBadRequest(Exception e) {
     String message = e.getMessage();
     if (e instanceof MethodArgumentTypeMismatchException) {
       message = "입력값의 형식이 올바르지 않습니다.";
-    } else if (e instanceof NoSuchElementException) {
-      message = "해당 ID로 데이터를 찾을 수 없습니다.";
     }
 
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
         .body(new ErrorResponse(message, 400));
+  }
+
+  @ExceptionHandler(NoSuchElementException.class)
+  public ResponseEntity<ErrorResponse> handleNotFound(NoSuchElementException e) {
+
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new ErrorResponse("해당 데이터를 찾을 수 없습니다.", 404));
   }
 
   @ExceptionHandler(Exception.class)

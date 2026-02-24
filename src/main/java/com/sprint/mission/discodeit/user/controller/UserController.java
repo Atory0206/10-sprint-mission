@@ -44,7 +44,6 @@ public class UserController {
           description = "같은 email 또는 username를 사용하는 User가 이미 존재함",
           content = @Content(
               examples = @ExampleObject(value = "User with email {email} already exists")))
-
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<User> createUser(
@@ -159,6 +158,14 @@ public class UserController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(users);
+  }
+
+  @GetMapping("/{userId}")
+  public ResponseEntity<UserDto> findById(@PathVariable UUID userId) {
+    UserDto userDto = userService.find(userId);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(userDto);
   }
 
   private Optional<BinaryContentCreateRequest> resolveProfileRequest(MultipartFile profileFile) {

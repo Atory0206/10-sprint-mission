@@ -1,10 +1,10 @@
-package com.sprint.mission.discodeit.user.service;
+package com.sprint.mission.discodeit.auth.service;
 
-import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
-import com.sprint.mission.discodeit.user.dto.UserLoginRequest;
+import com.sprint.mission.discodeit.auth.dto.UserLoginRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import com.sprint.mission.discodeit.user.repository.UserStatusRepository;
+import com.sprint.mission.discodeit.user.service.UserStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,6 @@ public class AuthService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final UserStatusService userStatusService;
-  private final UserStatusRepository userStatusRepository;
 
   public User login(UserLoginRequest request) {
     User user = userRepository.findByUsername(request.username())

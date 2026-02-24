@@ -6,6 +6,7 @@ import com.sprint.mission.discodeit.user.dto.UserStatusUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.repository.UserRepository;
 import com.sprint.mission.discodeit.user.repository.UserStatusRepository;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class BasicUserStatusService implements UserStatusService {
   @Override
   public void create(UserStatusCreateRequest request) {
     User user = userRepository.findById(request.userId())
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저입니다."));
 
     userStatusRepository.findByUserId(request.userId())
         .ifPresent(status -> {
@@ -35,7 +36,7 @@ public class BasicUserStatusService implements UserStatusService {
   @Override
   public UserStatus find(UUID userStatusID) {
     return userStatusRepository.findById(userStatusID)
-        .orElseThrow(() -> new IllegalArgumentException("해당 접속 상태 객체를 찾을 수 없습니다."));
+        .orElseThrow(() -> new NoSuchElementException("해당 접속 상태 객체를 찾을 수 없습니다."));
   }
 
   @Override
@@ -46,7 +47,7 @@ public class BasicUserStatusService implements UserStatusService {
   @Override
   public UserStatus update(UUID userId, UserStatusUpdateRequest request) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
-        .orElseThrow(() -> new IllegalArgumentException("해당 유저의 접속 상태 객체를 찾을 수 없습니다."));
+        .orElseThrow(() -> new NoSuchElementException(("해당 유저의 접속 상태 객체를 찾을 수 없습니다.")));
     userStatus.updateConnection();
     userStatusRepository.save(userStatus);
     return userStatus;
@@ -55,7 +56,7 @@ public class BasicUserStatusService implements UserStatusService {
   @Override
   public void updateByUserId(UUID userId) {
     UserStatus userStatus = userStatusRepository.findByUserId(userId)
-        .orElseThrow(() -> new IllegalArgumentException("해당 유저의 접속 상태 객체를 찾을 수 없습니다."));
+        .orElseThrow(() -> new NoSuchElementException(("해당 유저의 접속 상태 객체를 찾을 수 없습니다.")));
 
     userStatus.updateConnection();
     userStatusRepository.save(userStatus);

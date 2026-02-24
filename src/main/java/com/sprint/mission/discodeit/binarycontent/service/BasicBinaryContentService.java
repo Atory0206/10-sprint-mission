@@ -41,7 +41,7 @@ public class BasicBinaryContentService implements BinaryContentService {
   @Override
   public BinaryContent findById(UUID id) {
     return binaryContentRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("바이너리컨텐트 객체를 찾을 수 없습니다."));
+        .orElseThrow(() -> new NoSuchElementException("바이너리컨텐트 객체를 찾을 수 없습니다."));
   }
 
   @Override

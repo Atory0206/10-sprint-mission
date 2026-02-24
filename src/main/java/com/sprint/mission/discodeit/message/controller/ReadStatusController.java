@@ -102,4 +102,12 @@ public class ReadStatusController {
         .status(HttpStatus.OK)
         .body(readStatuses);
   }
+
+  @GetMapping("/{readStatusId}")
+  public ResponseEntity<ReadStatus> findById(@PathVariable UUID readStatusId) {
+    ReadStatus readStatus = readStatusService.find(readStatusId);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(readStatus);
+  }
 }

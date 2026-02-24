@@ -144,4 +144,12 @@ public class MessageController {
         status(HttpStatus.OK)
         .body(messages);
   }
+
+  @GetMapping("/{messageId}")
+  public ResponseEntity<Message> findById(@PathVariable UUID messageId) {
+    Message message = messageService.find(messageId);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(message);
+  }
 }

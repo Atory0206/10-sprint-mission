@@ -1,15 +1,13 @@
-package com.sprint.mission.discodeit.user.controller;
+package com.sprint.mission.discodeit.auth.controller;
 
-import com.sprint.mission.discodeit.user.dto.UserLoginRequest;
+import com.sprint.mission.discodeit.auth.service.AuthService;
+import com.sprint.mission.discodeit.auth.dto.UserLoginRequest;
 import com.sprint.mission.discodeit.user.entity.User;
-import com.sprint.mission.discodeit.user.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -54,11 +54,10 @@ public class BasicReadStatusService implements ReadStatusService {
   }
 
   @Override
-  public ReadStatusResponse find(UUID id) {
+  public ReadStatus find(UUID id) {
     ReadStatus readStatus = readStatusRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("해당 읽음 객체가 존재하지 않습니다"));
-
-    return readStatusMapper.convertToResponse(readStatus);
+        .orElseThrow(() -> new NoSuchElementException("해당 읽음 객체가 존재하지 않습니다"));
+    return readStatus;
   }
 
   @Override
@@ -72,7 +71,7 @@ public class BasicReadStatusService implements ReadStatusService {
   public ReadStatus update(UUID readStatusId, ReadStatusUpdateRequest request) {
     Instant newLastReadAt = request.newLastReadAt();
     ReadStatus readStatus = readStatusRepository.findById(readStatusId)
-        .orElseThrow(() -> new IllegalArgumentException("해당 읽음 객체가 존재하지 않습니다"));
+        .orElseThrow(() -> new NoSuchElementException("해당 읽음 객체가 존재하지 않습니다"));
 
     readStatus.updateLastRead();
     return readStatusRepository.save(readStatus);
