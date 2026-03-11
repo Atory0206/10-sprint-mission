@@ -2,50 +2,55 @@ package com.sprint.mission.discodeit.user.service;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
-import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
+import com.sprint.mission.discodeit.binarycontent.repository.JPABinaryContentRepository;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
-import com.sprint.mission.discodeit.user.repository.UserRepository;
+import com.sprint.mission.discodeit.user.mapper.UserMapper;
+import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import com.sprint.mission.discodeit.user.entity.UserStatus;
-import com.sprint.mission.discodeit.user.repository.UserStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class BasicUserService implements UserService {
 
-  private final UserRepository userRepository;
-  private final UserStatusRepository userStatusRepository;
-  private final BinaryContentRepository binaryContentRepository;
+  private final JPAUserRepository jpaUserRepository;
+  private final JPABinaryContentRepository JPABinaryContentRepository;
   private final PasswordEncoder passwordEncoder;
+  private final UserMapper userMapper;
+  private final BinaryContentStorage binaryContentStorage;
+
 
   @Override
-  public User create(UserCreateRequest request,
+  @Transactional
+  public UserDto create(UserCreateRequest request,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
-    java.util.List<User> allUsers = userRepository.findAll();
-    for (User user : allUsers) {
-      if (user.getUsername().equals(request.username())) {
-        throw new IllegalArgumentException("이미 존재하는 유저네임입니다.");
-      }
-      if (user.getEmail().equals(request.email())) {
-        throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-      }
+
+    if (jpaUserRepository.existsByUsername(request.username())) {
+      throw new IllegalArgumentException("이미 존재하는 유저네임입니다.");
+    }
+    if (jpaUserRepository.existsByEmail(request.email())) {
+      throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
     }
 
-    UUID nullableProfileId = optionalProfileCreateRequest
+    BinaryContent profile = optionalProfileCreateRequest
         .map(profileRequest -> {
-          String fileName = profileRequest.fileName();
-          String contentType = profileRequest.contentType();
-          byte[] bytes = profileRequest.bytes();
-          BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
-              contentType, bytes);
-          return binaryContentRepository.save(binaryContent).getId();
+          BinaryContent binaryContent = new BinaryContent(
+              profileRequest.fileName(),
+              (long) profileRequest.bytes().length,
+              profileRequest.contentType()
+          );
+          BinaryContent savedBinaryContent = JPABinaryContentRepository.save(binaryContent);
+          binaryContentStorage.put(savedBinaryContent.getId(), profileRequest.bytes());
+          return savedBinaryContent;
         })
         .orElse(null);
 
@@ -55,84 +60,67 @@ public class BasicUserService implements UserService {
         request.username(),
         request.email(),
         encodedPassword,
-        nullableProfileId
+        profile
     );
+    UserStatus userStatus = new UserStatus(user);
+    user.setUserStatus(userStatus);
 
-    User savedUser = userRepository.save(user);
-    userStatusRepository.save(new UserStatus(savedUser.getId()));
-    return savedUser;
+    User savedUser = jpaUserRepository.save(user);
+
+    return userMapper.toDto(savedUser);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public UserDto find(UUID userId) {
-    return userRepository.findById(userId)
-        .map(this::toDto)
+    return jpaUserRepository.findById(userId)
+        .map(userMapper::toDto)
         .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<UserDto> findAll() {
-    return userRepository.findAll()
+    return jpaUserRepository.findAll()
         .stream()
-        .map(this::toDto)
+        .map(userMapper::toDto)
         .toList();
   }
 
-
   @Override
-  public User update(UUID userId, UserUpdateRequest request,
+  @Transactional
+  public UserDto update(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
-    User user = userRepository.findById(userId)
+    User user = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
 
     String name = Optional.ofNullable(request.newUsername()).orElse(user.getUsername());
     String email = Optional.ofNullable(request.newEmail()).orElse(user.getEmail());
-    String password = Optional.ofNullable(request.newPassword()).orElse(user.getPassword());
-    UUID nullableProfileId = optionalProfileCreateRequest
-        .map(profileRequest -> {
-          Optional.ofNullable(user.getProfileId())
-              .ifPresent(binaryContentRepository::deleteById);
+    String password = Optional.ofNullable(request.newPassword())
+        .map(passwordEncoder::encode)
+        .orElse(user.getPassword());
 
-          String fileName = profileRequest.fileName();
-          String contentType = profileRequest.contentType();
-          byte[] bytes = profileRequest.bytes();
-          BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
-              contentType, bytes);
-          return binaryContentRepository.save(binaryContent).getId();
-        })
-        .orElse(null);
+    optionalProfileCreateRequest.ifPresent(profileRequest -> {
+      BinaryContent newProfile = new BinaryContent(
+          profileRequest.fileName(),
+          (long) profileRequest.bytes().length,
+          profileRequest.contentType()
+      );
+      BinaryContent savedBinaryContent = JPABinaryContentRepository.save(newProfile);
+      binaryContentStorage.put(savedBinaryContent.getId(), profileRequest.bytes());
+      user.setProfile(savedBinaryContent);
+    });
 
-    user.update(name, email, password, nullableProfileId);
-    return userRepository.save(user);
+    user.update(name, email, password);
+    return userMapper.toDto(user);
   }
 
   @Override
+  @Transactional
   public void delete(UUID userId) {
-    User user = userRepository.findById(userId)
+    User user = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
-
-    userStatusRepository.findByUserId(userId).ifPresent(status -> {
-      userStatusRepository.deleteById(status.getId());
-    });
-    userRepository.deleteById(userId);
-    Optional.ofNullable(user.getProfileId())
-        .ifPresent(binaryContentRepository::deleteById);
-  }
-
-  private UserDto toDto(User user) {
-    Boolean online = userStatusRepository.findByUserId(user.getId())
-        .map(UserStatus::isOnline)
-        .orElse(null);
-
-    return new UserDto(
-        user.getId(),
-        user.getCreatedAt(),
-        user.getUpdatedAt(),
-        user.getUsername(),
-        user.getEmail(),
-        user.getProfileId(),
-        online
-    );
+    jpaUserRepository.delete(user);
   }
 }
 

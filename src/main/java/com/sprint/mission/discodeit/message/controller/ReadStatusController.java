@@ -1,9 +1,8 @@
 package com.sprint.mission.discodeit.message.controller;
 
 import com.sprint.mission.discodeit.message.dto.ReadStatusCreateRequest;
-import com.sprint.mission.discodeit.message.dto.ReadStatusResponse;
+import com.sprint.mission.discodeit.message.dto.ReadStatusDto;
 import com.sprint.mission.discodeit.message.dto.ReadStatusUpdateRequest;
-import com.sprint.mission.discodeit.message.entity.ReadStatus;
 import com.sprint.mission.discodeit.message.service.ReadStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,10 +53,10 @@ public class ReadStatusController {
       )
   })
   @PostMapping
-  public ResponseEntity<ReadStatus> createReadStatus(
+  public ResponseEntity<ReadStatusDto> createReadStatus(
       @Parameter(description = "Message 읽음 상태 생성 정보")
       @RequestBody ReadStatusCreateRequest request) {
-    ReadStatus readStatus = readStatusService.create(request);
+    ReadStatusDto readStatus = readStatusService.create(request);
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(readStatus);
@@ -78,12 +77,12 @@ public class ReadStatusController {
   }
   )
   @PatchMapping("/{readStatusId}")
-  public ResponseEntity<ReadStatus> updateReadStatus
+  public ResponseEntity<ReadStatusDto> updateReadStatus
       (@Parameter(description = "수정할 읽음 상태 ID")
           @PathVariable UUID readStatusId,
           @Parameter(description = "수정할 읽음 상태 정보")
           @RequestBody ReadStatusUpdateRequest request) {
-    ReadStatus readStatus = readStatusService.update(readStatusId, request);
+    ReadStatusDto readStatus = readStatusService.update(readStatusId, request);
     return ResponseEntity.
         status(HttpStatus.OK)
         .body(readStatus);
@@ -95,17 +94,17 @@ public class ReadStatusController {
           description = "Message 읽음 상태 목록 조회 성공")
   )
   @GetMapping
-  public ResponseEntity<List<ReadStatus>> findAllByUserId(
+  public ResponseEntity<List<ReadStatusDto>> findAllByUserId(
       @Parameter(description = "조회할 User ID") @RequestParam UUID userId) {
-    List<ReadStatus> readStatuses = readStatusService.findAllByUserId(userId);
+    List<ReadStatusDto> readStatuses = readStatusService.findAllByUserId(userId);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(readStatuses);
   }
 
   @GetMapping("/{readStatusId}")
-  public ResponseEntity<ReadStatus> findById(@PathVariable UUID readStatusId) {
-    ReadStatus readStatus = readStatusService.find(readStatusId);
+  public ResponseEntity<ReadStatusDto> findById(@PathVariable UUID readStatusId) {
+    ReadStatusDto readStatus = readStatusService.find(readStatusId);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(readStatus);

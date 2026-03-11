@@ -2,102 +2,110 @@ package com.sprint.mission.discodeit.message.service;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
-import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
-import com.sprint.mission.discodeit.message.dto.MessageResponse;
-import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
+import com.sprint.mission.discodeit.binarycontent.repository.JPABinaryContentRepository;
 import com.sprint.mission.discodeit.channel.entity.Channel;
+import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
+import com.sprint.mission.discodeit.message.dto.MessageDto;
+import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
 import com.sprint.mission.discodeit.message.entity.Message;
 import com.sprint.mission.discodeit.message.mapper.MessageMapper;
-import com.sprint.mission.discodeit.message.repository.MessageRepository;
+import com.sprint.mission.discodeit.message.repository.JPAMessageRepository;
+import com.sprint.mission.discodeit.channel.repository.JPAChannelRepository;
+import com.sprint.mission.discodeit.paging.dto.PageResponse;
+import com.sprint.mission.discodeit.paging.mapper.PageResponseMapper;
+import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.entity.User;
-import com.sprint.mission.discodeit.binarycontent.repository.BinaryContentRepository;
-import com.sprint.mission.discodeit.channel.repository.ChannelRepository;
-import com.sprint.mission.discodeit.user.repository.UserRepository;
+import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 
 import java.util.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class BasicMessageService implements MessageService {
 
-  private final MessageRepository messageRepository;
-  //
-  private final ChannelRepository channelRepository;
-  private final UserRepository userRepository;
-  private final BinaryContentRepository binaryContentRepository;
+  private final JPAMessageRepository jpaMessageRepository;
+  private final JPAChannelRepository jpaChannelRepository;
+  private final JPAUserRepository jpaUserRepository;
   private final MessageMapper messageMapper;
+  private final BinaryContentStorage binaryContentStorage;
+  private final JPABinaryContentRepository jpaBinaryContentRepository;
+  private final PageResponseMapper pageResponseMapper;
 
   @Override
-  public Message create(MessageCreateRequest request,
+  @Transactional
+  public MessageDto create(MessageCreateRequest request,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
-    UUID channelId = request.channelId();
-    UUID authorId = request.authorId();
 
-    if (!channelRepository.existsById(channelId)) {
-      throw new NoSuchElementException("Channel with id " + channelId + " does not exist");
-    }
-    if (!userRepository.existsById(authorId)) {
-      throw new NoSuchElementException("Author with id " + authorId + " does not exist");
-    }
+    Channel channel = jpaChannelRepository.findById(request.channelId())
+        .orElseThrow(() -> new NoSuchElementException("Channel not found"));
+    User author = jpaUserRepository.findById(request.authorId())
+        .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-    List<UUID> attachmentIds = binaryContentCreateRequests.stream()
-        .map(attachmentRequest -> {
-          String fileName = attachmentRequest.fileName();
-          String contentType = attachmentRequest.contentType();
-          byte[] bytes = attachmentRequest.bytes();
-
-          BinaryContent binaryContent = new BinaryContent(fileName, (long) bytes.length,
-              contentType, bytes);
-          BinaryContent createdBinaryContent = binaryContentRepository.save(binaryContent);
-          return createdBinaryContent.getId();
+    List<BinaryContent> attachments = binaryContentCreateRequests.stream()
+        .map(req -> {
+          BinaryContent binaryContent = new BinaryContent(
+              req.fileName(),
+              (long) req.bytes().length,
+              req.contentType()
+          );
+          BinaryContent savedBinaryContent = jpaBinaryContentRepository.save(binaryContent);
+          binaryContentStorage.put(savedBinaryContent.getId(), req.bytes());
+          return savedBinaryContent;
         })
         .toList();
 
-    Message message = new Message(request.content(), request.channelId(), request.authorId(),
-        attachmentIds);
-    return messageRepository.save(message);
+    Message message = new Message(request.content(), channel, author,
+        attachments);
+    Message savedMessage = jpaMessageRepository.save(message);
+    return messageMapper.toDto(savedMessage);
   }
 
   @Override
-  public Message find(UUID messageId) {
-    return messageRepository.findById(messageId)
+  @Transactional(readOnly = true)
+  public MessageDto find(UUID messageId) {
+    return jpaMessageRepository.findById(messageId)
+        .map(messageMapper::toDto)
         .orElseThrow(
             () -> new NoSuchElementException("Message with id " + messageId + " not found"));
   }
 
   @Override
-  public List<Message> findByChannelId(UUID channelId) {
-    return messageRepository.findByChannelId(channelId).stream()
-        .toList();
+  @Transactional(readOnly = true)
+  public PageResponse<MessageDto> findAllByChannelId(UUID channelId, Instant cursor,
+      Pageable pageable) {
+    Slice<MessageDto> slice = jpaMessageRepository
+        .findByChannelIdWithCursor(channelId, cursor, pageable)
+        .map(messageMapper::toDto);
+
+    Object nextCursor = slice.hasNext() && !slice.getContent().isEmpty()
+        ? slice.getContent().get(slice.getContent().size() - 1).createdAt()
+        : null;
+
+    return pageResponseMapper.slice(slice, nextCursor);
   }
 
   @Override
-  public List<Message> findAllByChannelId(UUID channelId) {
-    List<Message> messages = messageRepository.findByChannelId(channelId);
-    return messages;
-  }
-
-  @Override
-  public Message update(UUID messageId, MessageUpdateRequest request) {
-    Message message = messageRepository.findById(messageId)
+  @Transactional
+  public MessageDto update(UUID messageId, MessageUpdateRequest request) {
+    Message message = jpaMessageRepository.findById(messageId)
         .orElseThrow(() -> new NoSuchElementException("Message not found"));
     message.update(request.newContent());
-    return messageRepository.save(message);
+    return messageMapper.toDto(message);
   }
 
   @Override
+  @Transactional
   public void delete(UUID messageId) {
-    Message message = messageRepository.findById(messageId)
+    Message message = jpaMessageRepository.findById(messageId)
         .orElseThrow(() -> new NoSuchElementException("Message not found"));
-
-    if (message.getAttachmentIds() != null) {
-      message.getAttachmentIds().forEach(binaryContentRepository::deleteById);
-    }
-    ;
-    messageRepository.deleteById(messageId);
+    jpaMessageRepository.delete(message);
   }
 
 }

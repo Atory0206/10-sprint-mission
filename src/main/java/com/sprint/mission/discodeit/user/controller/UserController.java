@@ -2,9 +2,6 @@ package com.sprint.mission.discodeit.user.controller;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.user.dto.*;
-import com.sprint.mission.discodeit.user.entity.User;
-import com.sprint.mission.discodeit.user.entity.UserStatus;
-import com.sprint.mission.discodeit.user.repository.UserStatusRepository;
 import com.sprint.mission.discodeit.user.service.UserService;
 import com.sprint.mission.discodeit.user.service.UserStatusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,14 +43,14 @@ public class UserController {
               examples = @ExampleObject(value = "User with email {email} already exists")))
   })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<User> createUser(
+  public ResponseEntity<UserDto> createUser(
       @Parameter(description = "User 생성 정보")
       @RequestPart UserCreateRequest userCreateRequest,
       @Parameter(description = "User 프로필 이미지")
       @RequestPart(required = false) MultipartFile profile) {
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
-    User createdUser = userService.create(userCreateRequest, profileRequest);
+    UserDto createdUser = userService.create(userCreateRequest, profileRequest);
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdUser);
@@ -84,7 +81,7 @@ public class UserController {
   @PatchMapping(
       value = "/{userId}",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<User> updateUser(
+  public ResponseEntity<UserDto> updateUser(
       @Parameter(description = "수정할 User ID")
       @PathVariable UUID userId,
       @Parameter(description = "수정할 User 정보")
@@ -93,7 +90,7 @@ public class UserController {
       @RequestPart(value = "profile", required = false) MultipartFile profile) {
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
-    User updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
+    UserDto updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedUser);
@@ -133,13 +130,13 @@ public class UserController {
 
   })
   @PatchMapping("/{userId}/userStatus")
-  public ResponseEntity<UserStatus> updateOnlineStatus(
+  public ResponseEntity<UserStatusDto> updateOnlineStatus(
       @Parameter(description = "상태를 변경할 User ID")
       @PathVariable UUID userId
       ,
       @Parameter(description = "변경할 User 온라인 상태 정보")
       @RequestBody UserStatusUpdateRequest request) {
-    UserStatus userStatus = userStatusService.update(userId, request);
+    UserStatusDto userStatus = userStatusService.updateByUserId(userId, request);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(userStatus);

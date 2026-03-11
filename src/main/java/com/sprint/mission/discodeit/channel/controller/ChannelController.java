@@ -1,7 +1,6 @@
 package com.sprint.mission.discodeit.channel.controller;
 
 import com.sprint.mission.discodeit.channel.dto.*;
-import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.service.ChannelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,8 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,10 +37,10 @@ public class ChannelController {
       }
   )
   @PostMapping("/public")
-  public ResponseEntity<Channel> createPublicChannel(
+  public ResponseEntity<ChannelDto> createPublicChannel(
       @Parameter(description = "Public Channel 생성 정보")
       @RequestBody ChannelCreatePublicRequest request) {
-    Channel createdChannel = channelService.create(request);
+    ChannelDto createdChannel = channelService.create(request);
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdChannel);
@@ -56,10 +53,10 @@ public class ChannelController {
           description = "Private Channel이 성공적으로 생성됨")
   })
   @PostMapping("/private")
-  public ResponseEntity<Channel> createPrivateChannel(
+  public ResponseEntity<ChannelDto> createPrivateChannel(
       @Parameter(description = "Private Channel 생성 정보")
       @RequestBody ChannelCreatePrivateRequest request) {
-    Channel createdChannel = channelService.create(request);
+    ChannelDto createdChannel = channelService.create(request);
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdChannel);
@@ -83,12 +80,12 @@ public class ChannelController {
   }
   )
   @PatchMapping("/{channelId}")
-  public ResponseEntity<Channel> updatePublicChannel(
+  public ResponseEntity<ChannelDto> updatePublicChannel(
       @Parameter(description = "수정할 Channel ID")
       @PathVariable UUID channelId,
       @Parameter(description = "수정할 Channel 정보")
       @RequestBody ChannelUpdateRequest request) {
-    Channel updatedChannel = channelService.update(channelId, request);
+    ChannelDto updatedChannel = channelService.update(channelId, request);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedChannel);
