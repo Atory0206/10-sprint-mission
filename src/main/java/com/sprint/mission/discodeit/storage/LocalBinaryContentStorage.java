@@ -4,6 +4,7 @@ import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentDto;
 import jakarta.annotation.PostConstruct;
 
 import java.nio.charset.StandardCharsets;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +20,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriUtils;
 
 @Component
+@ConditionalOnProperty(name = "discodeit.storage.type", havingValue = "local")
 public class LocalBinaryContentStorage implements BinaryContentStorage {
 
   private final Path root;
@@ -72,12 +73,10 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     InputStream inputStream = get(dto.id());
     Resource resource = new InputStreamResource(inputStream);
 
-    String encodedFileName = UriUtils.encode(dto.fileName(), StandardCharsets.UTF_8);
-
     return ResponseEntity.ok()
         .header(HttpHeaders.CONTENT_DISPOSITION,
             ContentDisposition.attachment()
-                .filename(dto.fileName())
+                .filename(dto.fileName(), StandardCharsets.UTF_8)
                 .build()
                 .toString())
         .contentType(MediaType.parseMediaType(dto.contentType()))

@@ -94,6 +94,13 @@ public class BasicUserService implements UserService {
     User user = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
 
+    if (jpaUserRepository.existsByUsername(request.newUsername())) {
+      throw new IllegalArgumentException("이미 존재하는 유저네임입니다.");
+    }
+    if (jpaUserRepository.existsByEmail(request.newEmail())) {
+      throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+    }
+
     String name = Optional.ofNullable(request.newUsername()).orElse(user.getUsername());
     String email = Optional.ofNullable(request.newEmail()).orElse(user.getEmail());
     String password = Optional.ofNullable(request.newPassword())

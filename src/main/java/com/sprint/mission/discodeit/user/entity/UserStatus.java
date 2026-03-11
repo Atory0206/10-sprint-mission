@@ -30,9 +30,9 @@ public class UserStatus extends BaseUpdatableEntity {
     this.lastActiveAt = Instant.now();
   }
 
-  public void updateConnection() {
-    this.lastActiveAt = Instant.now();
-    this.updatedAt = Instant.now();
+  public void updateConnection(Instant newLastReadAt) {
+    this.lastActiveAt = newLastReadAt;
+    this.updatedAt = lastActiveAt;
   }
 
   public boolean isOnline() {

@@ -35,15 +35,18 @@ public class BasicReadStatusService implements ReadStatusService {
     UUID userId = request.userId();
     UUID channelId = request.channelId();
 
+    if (jpaReadStatusRepository.existsByUserIdAndChannelId(userId, channelId)) {
+      throw new IllegalArgumentException("이미 해당 채널에 대한 읽기 상태가 존재합니다.");
+    }
+
     User user = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new NoSuchElementException("User not found"));
     Channel channel = jpaChannelRepository.findById(channelId)
         .orElseThrow(() -> new NoSuchElementException("Channel not found"));
 
-    ReadStatus readStatus = jpaReadStatusRepository.findByUserIdAndChannelId(userId, channelId)
-        .orElseGet(() -> jpaReadStatusRepository.save(
-            new ReadStatus(user, channel, request.lastReadAt())
-        ));
+    ReadStatus readStatus = jpaReadStatusRepository.save(
+        new ReadStatus(user, channel, request.lastReadAt())
+    );
     return readStatusMapper.toDto(readStatus);
   }
 
@@ -69,7 +72,7 @@ public class BasicReadStatusService implements ReadStatusService {
   public ReadStatusDto update(UUID readStatusId, ReadStatusUpdateRequest request) {
     ReadStatus readStatus = jpaReadStatusRepository.findById(readStatusId)
         .orElseThrow(() -> new NoSuchElementException("해당 읽음 객체가 존재하지 않습니다"));
-    readStatus.updateLastRead();
+    readStatus.updateLastRead(request.newLastReadAt());
     return readStatusMapper.toDto(readStatus);
   }
 

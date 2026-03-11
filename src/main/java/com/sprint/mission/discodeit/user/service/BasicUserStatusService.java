@@ -61,7 +61,7 @@ public class BasicUserStatusService implements UserStatusService {
   public UserStatusDto update(UUID userStatusId, UserStatusUpdateRequest request) {
     UserStatus userStatus = jpaUserStatusRepository.findById(userStatusId)
         .orElseThrow(() -> new NoSuchElementException(("해당 유저의 접속 상태 객체를 찾을 수 없습니다.")));
-    userStatus.updateConnection();
+    userStatus.updateConnection(request.newLastActiveAt());
     return userStatusMapper.toDto(userStatus);
   }
 
@@ -71,7 +71,7 @@ public class BasicUserStatusService implements UserStatusService {
     UserStatus userStatus = jpaUserStatusRepository.findByUserId(userId)
         .orElseThrow(() -> new NoSuchElementException(("해당 유저의 접속 상태 객체를 찾을 수 없습니다.")));
 
-    userStatus.updateConnection();
+    userStatus.updateConnection(request.newLastActiveAt());
     return userStatusMapper.toDto(userStatus);
   }
 
