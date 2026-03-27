@@ -5,6 +5,8 @@ import com.sprint.mission.discodeit.channel.entity.Channel;
 import com.sprint.mission.discodeit.channel.entity.ChannelType;
 import com.sprint.mission.discodeit.channel.mapper.ChannelMapper;
 import com.sprint.mission.discodeit.channel.repository.JPAChannelRepository;
+import com.sprint.mission.discodeit.common.exception.channel.ChannelCantUpdatePrivateException;
+import com.sprint.mission.discodeit.common.exception.channel.ChannelNotFoundException;
 import com.sprint.mission.discodeit.message.entity.ReadStatus;
 import com.sprint.mission.discodeit.message.repository.JPAMessageRepository;
 import com.sprint.mission.discodeit.message.repository.JPAReadStatusRepository;
@@ -14,6 +16,7 @@ import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BasicChannelService implements ChannelService {
 
   private final JPAChannelRepository jpaChannelRepository;
@@ -34,6 +38,10 @@ public class BasicChannelService implements ChannelService {
   @Override
   @Transactional
   public ChannelDto create(ChannelCreatePrivateRequest request) {
+
+    log.info("[CHANNEL_CREATE] private 채널 생성 시작 : participantIds={}",
+        request.participantIds());
+
     Channel channel = new Channel(ChannelType.PRIVATE, null, null);
     Channel createdChannel = jpaChannelRepository.save(channel);
 
@@ -44,14 +52,21 @@ public class BasicChannelService implements ChannelService {
         .toList();
 
     jpaReadStatusRepository.saveAll(readStatuses);
+    log.info("[CHANNEL_CREATE] private 채널 생성 완료 channelId={}", channel.getId());
     return channelMapper.toDto(createdChannel);
   }
 
   @Override
   @Transactional
   public ChannelDto create(ChannelCreatePublicRequest request) {
+    log.info("[CHANNEL_CREATE] public 채널 생성 시작 : channelName={}, channelDescription={}",
+        request.name(), request.description());
+
     Channel channel = new Channel(ChannelType.PUBLIC, request.name(), request.description());
     jpaChannelRepository.save(channel);
+
+    log.info("[CHANNEL_CREATE] public 채널 생성 완료 : channelId={}",
+        channel.getId());
     return channelMapper.toDto(channel);
   }
 
@@ -60,7 +75,7 @@ public class BasicChannelService implements ChannelService {
   public ChannelDto find(UUID channelId) {
     Channel channel = jpaChannelRepository.findById(channelId)
         .orElseThrow(
-            () -> new NoSuchElementException("Channel with id " + channelId + " not found"));
+            () -> new ChannelNotFoundException(Map.of("channelId", channelId)));
     return channelMapper.toDto(channel);
   }
 
@@ -109,23 +124,32 @@ public class BasicChannelService implements ChannelService {
   @Override
   @Transactional
   public ChannelDto update(UUID channelId, ChannelUpdateRequest request) {
+    log.info("[CHANNEL_UPDATE] 채널 정보 수정 시작 : channelId={}",
+        channelId);
+
     Channel channel = jpaChannelRepository.findById(channelId)
-        .orElseThrow(() -> new NoSuchElementException("채널을 찾을 수 없습니다."));
+        .orElseThrow(() -> new ChannelNotFoundException(Map.of("channelId", channelId)));
 
     if (channel.getType() == ChannelType.PRIVATE) {
-      throw new IllegalArgumentException("PRIVATE 채널은 수정할 수 없습니다");
+      throw new ChannelCantUpdatePrivateException(Map.of("channelId", channelId));
     }
 
     channel.update(request.newName(), request.newDescription());
+    log.info("[CHANNEL_UPDATE] 채널 정보 수정 완료 : channelId={}, channelNewName={}, channelNewDesc={}"
+        , channelId, channel.getName(), channel.getDescription());
     return channelMapper.toDto(channel);
   }
 
   @Override
   @Transactional
   public void delete(UUID channelId) {
+
+    log.info("[CHANNEL_DELETE] 채널 삭제 시작 : channelId={} ", channelId);
+
     Channel channel = jpaChannelRepository.findById(channelId)
-        .orElseThrow(() -> new NoSuchElementException("Channel not found"));
+        .orElseThrow(() -> new ChannelNotFoundException(Map.of("channelId", channelId)));
     jpaChannelRepository.delete(channel);
+    log.info("[CHANNEL_DELETE] 채널 삭제 완료 : channelId={} ", channelId);
 
   }
 }

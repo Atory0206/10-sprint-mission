@@ -14,8 +14,10 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -35,6 +37,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/messages")
 @RequiredArgsConstructor
+@Slf4j
 public class MessageController {
 
   private final MessageService messageService;
@@ -54,12 +57,17 @@ public class MessageController {
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MessageDto> createMessage(
       @RequestPart
-      @Parameter(description = "Message 생성 정보")
+      @Valid @Parameter(description = "Message 생성 정보")
       MessageCreateRequest messageCreateRequest,
 
       @Parameter(description = "Message 첨부 파일들")
       @RequestPart(value = "attachments", required = false)
       List<MultipartFile> attachments) {
+
+    log.debug("[MESSAGE_CONTROLLER] 메시지 생성 요청 : channelId={}, authorId={}, attachmentCount={}",
+        messageCreateRequest.channelId(),
+        messageCreateRequest.authorId(),
+        attachments != null ? attachments.size() : 0);
 
     List<BinaryContentCreateRequest> attachmentRequests = Optional.ofNullable(attachments)
         .map(files -> files.stream()
@@ -78,6 +86,7 @@ public class MessageController {
         .orElse(new ArrayList<>());
 
     MessageDto createdMessage = messageService.create(messageCreateRequest, attachmentRequests);
+    log.debug("[MESSAGE_CONTROLLER] 메시지 생성 응답 : messageId={}", createdMessage.id());
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -103,7 +112,14 @@ public class MessageController {
       @PathVariable UUID messageId,
       @Parameter(description = "수정할 Message 내용")
       @RequestBody MessageUpdateRequest request) {
+
+    log.debug("[MESSAGE_CONTROLLER] 메시지 수정 요청 : messageId={}, messageNewContent={}",
+        messageId, request.newContent());
+
     MessageDto updatedMessage = messageService.update(messageId, request);
+
+    log.debug("[MESSAGE_CONTROLLER] 메시지 수정 응답 : messageId={}, messageContent={}",
+        updatedMessage.id(), updatedMessage.content());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedMessage);
@@ -125,7 +141,13 @@ public class MessageController {
   public ResponseEntity<Void> deleteMessage(
       @Parameter(description = "삭제할 Message ID")
       @PathVariable UUID messageId) {
+
+    log.debug("[MESSAGE_CONTROLLER] 메시지 삭제 요청 messageId={}", messageId);
+
     messageService.delete(messageId);
+
+    log.debug("[MESSAGE_CONTROLLER] 메시지 삭제 응답 messageId={}", messageId);
+
     return ResponseEntity.
         status(HttpStatus.NO_CONTENT)
         .build();

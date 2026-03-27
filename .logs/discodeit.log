@@ -1,0 +1,104 @@
+26-03-27 11:15:36.411 [background-preinit] INFO  o.h.validator.internal.util.Version  - HV000001: Hibernate Validator 8.0.1.Final
+26-03-27 11:15:36.483 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Starting DiscodeitApplication using Java 17.0.17 with PID 29264 (C:\codeit\sprint_mission_3_base\build\classes\java\main started by HP in C:\codeit\sprint_mission_3_base)
+26-03-27 11:15:36.484 [main] DEBUG c.s.m.discodeit.DiscodeitApplication - Running with Spring Boot v3.4.0, Spring v6.2.0
+26-03-27 11:15:36.484 [main] INFO  c.s.m.discodeit.DiscodeitApplication - The following 1 profile is active: "dev"
+26-03-27 11:15:37.575 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+26-03-27 11:15:37.706 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 121 ms. Found 6 JPA repository interfaces.
+26-03-27 11:15:38.448 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat initialized with port 8080 (http)
+26-03-27 11:15:38.465 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Initializing ProtocolHandler ["http-nio-8080"]
+26-03-27 11:15:38.467 [main] INFO  o.a.catalina.core.StandardService    - Starting service [Tomcat]
+26-03-27 11:15:38.467 [main] INFO  o.a.catalina.core.StandardEngine     - Starting Servlet engine: [Apache Tomcat/10.1.33]
+26-03-27 11:15:38.576 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring embedded WebApplicationContext
+26-03-27 11:15:38.577 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2035 ms
+26-03-27 11:15:38.760 [main] INFO  o.h.jpa.internal.util.LogHelper      - HHH000204: Processing PersistenceUnitInfo [name: default]
+26-03-27 11:15:38.850 [main] INFO  org.hibernate.Version                - HHH000412: Hibernate ORM core version 6.6.2.Final
+26-03-27 11:15:38.898 [main] INFO  o.h.c.i.RegionFactoryInitiator       - HHH000026: Second-level cache disabled
+26-03-27 11:15:39.286 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo  - No LoadTimeWeaver setup: ignoring JPA class transformer
+26-03-27 11:15:39.330 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Starting...
+26-03-27 11:15:39.574 [main] INFO  com.zaxxer.hikari.pool.HikariPool    - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2cd5b19c
+26-03-27 11:15:39.576 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Start completed.
+26-03-27 11:15:39.633 [main] WARN  org.hibernate.orm.deprecation        - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+26-03-27 11:15:39.656 [main] INFO  o.hibernate.orm.connections.pooling  - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+26-03-27 11:15:40.952 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+26-03-27 11:15:40.956 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+26-03-27 11:15:41.390 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+26-03-27 11:15:42.230 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+26-03-27 11:15:42.248 [main] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: c8f18173-efd4-41a6-8b15-e4a61c3762fb
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+26-03-27 11:15:42.259 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+26-03-27 11:15:42.355 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+26-03-27 11:15:42.881 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Starting ProtocolHandler ["http-nio-8080"]
+26-03-27 11:15:42.902 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat started on port 8080 (http) with context path '/'
+26-03-27 11:15:42.911 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Started DiscodeitApplication in 7.114 seconds (process running for 7.962)
+26-03-27 11:15:50.280 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-03-27 11:15:50.280 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet    - Initializing Servlet 'dispatcherServlet'
+26-03-27 11:15:50.282 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet    - Completed initialization in 1 ms
+26-03-27 11:16:02.456 [http-nio-8080-exec-4] WARN  c.s.m.d.c.e.GlobalExceptionHandler   - 유효하지 않은 값 : Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.sprint.mission.discodeit.user.dto.UserDto> com.sprint.mission.discodeit.user.controller.UserController.createUser(com.sprint.mission.discodeit.user.dto.UserCreateRequest,org.springframework.web.multipart.MultipartFile): [Field error in object 'userCreateRequest' on field 'password': rejected value [12]; codes [Size.userCreateRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [userCreateRequest.password,password]; arguments []; default message [password],2147483647,10]; default message [비밀번호는 10자 이상이어야 합니다.]] 
+26-03-27 11:18:58.209 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Commencing graceful shutdown. Waiting for active requests to complete
+26-03-27 11:18:58.697 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Graceful shutdown complete
+26-03-27 11:18:58.702 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+26-03-27 11:18:58.703 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown initiated...
+26-03-27 11:18:58.705 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown completed.
+26-03-27 11:19:04.815 [background-preinit] INFO  o.h.validator.internal.util.Version  - HV000001: Hibernate Validator 8.0.1.Final
+26-03-27 11:19:04.868 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Starting DiscodeitApplication using Java 17.0.17 with PID 5492 (C:\codeit\sprint_mission_3_base\build\classes\java\main started by HP in C:\codeit\sprint_mission_3_base)
+26-03-27 11:19:04.868 [main] DEBUG c.s.m.discodeit.DiscodeitApplication - Running with Spring Boot v3.4.0, Spring v6.2.0
+26-03-27 11:19:04.869 [main] INFO  c.s.m.discodeit.DiscodeitApplication - The following 1 profile is active: "dev"
+26-03-27 11:19:05.817 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+26-03-27 11:19:05.939 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 113 ms. Found 6 JPA repository interfaces.
+26-03-27 11:19:06.548 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat initialized with port 8080 (http)
+26-03-27 11:19:06.559 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Initializing ProtocolHandler ["http-nio-8080"]
+26-03-27 11:19:06.561 [main] INFO  o.a.catalina.core.StandardService    - Starting service [Tomcat]
+26-03-27 11:19:06.561 [main] INFO  o.a.catalina.core.StandardEngine     - Starting Servlet engine: [Apache Tomcat/10.1.33]
+26-03-27 11:19:06.644 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring embedded WebApplicationContext
+26-03-27 11:19:06.644 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1724 ms
+26-03-27 11:19:06.812 [main] INFO  o.h.jpa.internal.util.LogHelper      - HHH000204: Processing PersistenceUnitInfo [name: default]
+26-03-27 11:19:06.882 [main] INFO  org.hibernate.Version                - HHH000412: Hibernate ORM core version 6.6.2.Final
+26-03-27 11:19:06.920 [main] INFO  o.h.c.i.RegionFactoryInitiator       - HHH000026: Second-level cache disabled
+26-03-27 11:19:07.248 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo  - No LoadTimeWeaver setup: ignoring JPA class transformer
+26-03-27 11:19:07.288 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Starting...
+26-03-27 11:19:07.495 [main] INFO  com.zaxxer.hikari.pool.HikariPool    - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@76b642aa
+26-03-27 11:19:07.497 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Start completed.
+26-03-27 11:19:07.533 [main] WARN  org.hibernate.orm.deprecation        - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+26-03-27 11:19:07.553 [main] INFO  o.hibernate.orm.connections.pooling  - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+26-03-27 11:19:08.719 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+26-03-27 11:19:08.722 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+26-03-27 11:19:09.120 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+26-03-27 11:19:09.884 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+26-03-27 11:19:09.901 [main] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 0dde4629-354e-48ea-8578-5b3a85fc6543
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+26-03-27 11:19:09.910 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+26-03-27 11:19:09.993 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+26-03-27 11:19:10.488 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Starting ProtocolHandler ["http-nio-8080"]
+26-03-27 11:19:10.511 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat started on port 8080 (http) with context path '/'
+26-03-27 11:19:10.520 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Started DiscodeitApplication in 6.224 seconds (process running for 6.94)
+26-03-27 11:19:15.680 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-03-27 11:19:15.681 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet    - Initializing Servlet 'dispatcherServlet'
+26-03-27 11:19:15.682 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet    - Completed initialization in 1 ms
+26-03-27 11:19:15.923 [http-nio-8080-exec-1] WARN  c.s.m.d.c.e.GlobalExceptionHandler   - 유효하지 않은 값 : Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.sprint.mission.discodeit.user.dto.UserDto> com.sprint.mission.discodeit.user.controller.UserController.createUser(com.sprint.mission.discodeit.user.dto.UserCreateRequest,org.springframework.web.multipart.MultipartFile): [Field error in object 'userCreateRequest' on field 'password': rejected value [12]; codes [Size.userCreateRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [userCreateRequest.password,password]; arguments []; default message [password],2147483647,10]; default message [비밀번호는 10자 이상이어야 합니다.]] 
+26-03-27 11:21:26.782 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Commencing graceful shutdown. Waiting for active requests to complete
+26-03-27 11:21:27.265 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Graceful shutdown complete
+26-03-27 11:21:27.269 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+26-03-27 11:21:27.271 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown initiated...
+26-03-27 11:21:27.272 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown completed.

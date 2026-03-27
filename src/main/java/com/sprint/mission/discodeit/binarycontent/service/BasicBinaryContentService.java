@@ -5,17 +5,20 @@ import com.sprint.mission.discodeit.binarycontent.mapper.BinaryContentMapper;
 import com.sprint.mission.discodeit.binarycontent.repository.JPABinaryContentRepository;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.common.exception.binarycontent.BinaryContentNotFoundException;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BasicBinaryContentService implements BinaryContentService {
 
   private final JPABinaryContentRepository jpaBinaryContentRepository;
@@ -25,6 +28,10 @@ public class BasicBinaryContentService implements BinaryContentService {
   @Override
   @Transactional
   public BinaryContentDto create(BinaryContentCreateRequest request) {
+
+    log.info("[BINARY_CONTENT_CREATE] 파일 저장 시작 : fileName={}, size={}, contentType={}",
+        request.fileName(), request.bytes().length, request.contentType());
+
     String fileName = request.fileName();
     byte[] bytes = request.bytes();
     String contentType = request.contentType();
@@ -36,6 +43,8 @@ public class BasicBinaryContentService implements BinaryContentService {
     BinaryContent savedBinaryContent = jpaBinaryContentRepository.save(binaryContent);
     binaryContentStorage.put(savedBinaryContent.getId(), bytes);
 
+    log.info("[BINARY_CONTENT_CREATE] 파일 저장 완료 : binaryContentId={}", savedBinaryContent.getId());
+
     return binaryContentMapper.toDto(savedBinaryContent);
   }
 
@@ -44,8 +53,8 @@ public class BasicBinaryContentService implements BinaryContentService {
   public BinaryContentDto find(UUID binaryContentId) {
     return jpaBinaryContentRepository.findById(binaryContentId)
         .map(binaryContentMapper::toDto)
-        .orElseThrow(() -> new NoSuchElementException(
-            "BinaryContent with id " + binaryContentId + " not found"));
+        .orElseThrow(
+            () -> new BinaryContentNotFoundException(Map.of("binaryContentId", binaryContentId)));
   }
 
   @Override

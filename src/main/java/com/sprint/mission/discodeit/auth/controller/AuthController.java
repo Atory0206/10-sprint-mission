@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<UserDto> login(
       @io.swagger.v3.oas.annotations.parameters.RequestBody
-      @RequestBody UserLoginRequest request) {
+      @Valid @RequestBody UserLoginRequest request) {
     UserDto user = authService.login(request);
     return ResponseEntity
         .status(HttpStatus.OK)

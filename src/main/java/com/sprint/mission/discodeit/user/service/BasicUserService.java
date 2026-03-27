@@ -3,6 +3,8 @@ package com.sprint.mission.discodeit.user.service;
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.repository.JPABinaryContentRepository;
+import com.sprint.mission.discodeit.common.exception.user.UserAlreadyExistException;
+import com.sprint.mission.discodeit.common.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
@@ -12,6 +14,7 @@ import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import com.sprint.mission.discodeit.user.entity.UserStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BasicUserService implements UserService {
 
   private final JPAUserRepository jpaUserRepository;
@@ -34,15 +38,19 @@ public class BasicUserService implements UserService {
   public UserDto create(UserCreateRequest request,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
 
+    log.info("[USER_CREATE] 유저 생성 시작 : username={}, email={}", request.username(), request.email());
+
     if (jpaUserRepository.existsByUsername(request.username())) {
-      throw new IllegalArgumentException("이미 존재하는 유저네임입니다.");
+      throw new UserAlreadyExistException(Map.of("username", request.username()));
     }
     if (jpaUserRepository.existsByEmail(request.email())) {
-      throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+      throw new UserAlreadyExistException(Map.of("email", request.email()));
     }
 
     BinaryContent profile = optionalProfileCreateRequest
         .map(profileRequest -> {
+          log.info("[USER_CREATE] 프로필 요청 시작 : fileName={}, size={}",
+              profileRequest.fileName(), profileRequest.bytes().length);
           BinaryContent binaryContent = new BinaryContent(
               profileRequest.fileName(),
               (long) profileRequest.bytes().length,
@@ -50,6 +58,7 @@ public class BasicUserService implements UserService {
           );
           BinaryContent savedBinaryContent = JPABinaryContentRepository.save(binaryContent);
           binaryContentStorage.put(savedBinaryContent.getId(), profileRequest.bytes());
+          log.info("[USER_CREATE] 프로필 요청 저장 : binaryContentID={}", savedBinaryContent.getId());
           return savedBinaryContent;
         })
         .orElse(null);
@@ -67,6 +76,9 @@ public class BasicUserService implements UserService {
 
     User savedUser = jpaUserRepository.save(user);
 
+    log.info("[USER_CREATE] 유저 생성 완료 : id={}, username={}", savedUser.getId(),
+        savedUser.getUsername());
+
     return userMapper.toDto(savedUser);
   }
 
@@ -75,7 +87,7 @@ public class BasicUserService implements UserService {
   public UserDto find(UUID userId) {
     return jpaUserRepository.findById(userId)
         .map(userMapper::toDto)
-        .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+        .orElseThrow(() -> new UserNotFoundException(Map.of("userId", userId)));
   }
 
   @Override
@@ -91,14 +103,18 @@ public class BasicUserService implements UserService {
   @Transactional
   public UserDto update(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
+
+    log.info("[USER_UPDATE] 유저 정보 수정 시작 : userId={}, newUsername={}, newEmail={}",
+        userId, request.newUsername(), request.newEmail());
+
     User user = jpaUserRepository.findById(userId)
-        .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+        .orElseThrow(() -> new UserNotFoundException(Map.of("userId", userId)));
 
     if (jpaUserRepository.existsByUsername(request.newUsername())) {
-      throw new IllegalArgumentException("이미 존재하는 유저네임입니다.");
+      throw new UserAlreadyExistException(Map.of("userName", request.newUsername()));
     }
     if (jpaUserRepository.existsByEmail(request.newEmail())) {
-      throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+      throw new UserAlreadyExistException(Map.of("email", request.newEmail()));
     }
 
     String name = Optional.ofNullable(request.newUsername()).orElse(user.getUsername());
@@ -108,6 +124,8 @@ public class BasicUserService implements UserService {
         .orElse(user.getPassword());
 
     optionalProfileCreateRequest.ifPresent(profileRequest -> {
+      log.debug("[USER_UPDATE] 프로필 이미지 수정 시작 : fileName={}, size={}",
+          profileRequest.fileName(), profileRequest.bytes().length);
       BinaryContent newProfile = new BinaryContent(
           profileRequest.fileName(),
           (long) profileRequest.bytes().length,
@@ -116,19 +134,23 @@ public class BasicUserService implements UserService {
       BinaryContent savedBinaryContent = JPABinaryContentRepository.save(newProfile);
       binaryContentStorage.put(savedBinaryContent.getId(), profileRequest.bytes());
       user.setProfile(savedBinaryContent);
+      log.debug("[USER_UPDATE] 프로필 이미지 수정 완료 : binaryContentId={}", savedBinaryContent.getId());
     });
 
     user.update(name, email, password);
+    log.info("[USER_UPDATE] 유저 정보 수정 완료 : id={},newUserName={}, newEmail={}",
+        user.getId(), request.newUsername(), request.newEmail());
     return userMapper.toDto(user);
   }
 
   @Override
   @Transactional
   public void delete(UUID userId) {
+    log.info("[USER_DELETE] 유저 삭제 시작 userId={}", userId);
     User user = jpaUserRepository.findById(userId)
-        .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+        .orElseThrow(() -> new UserNotFoundException(Map.of("userId", userId)));
     jpaUserRepository.delete(user);
+    log.info("[USER_DELETE] 유저 삭제 완료 userId={}", userId);
   }
+
 }
-
-

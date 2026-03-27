@@ -4,6 +4,9 @@ import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
 import com.sprint.mission.discodeit.binarycontent.repository.JPABinaryContentRepository;
 import com.sprint.mission.discodeit.channel.entity.Channel;
+import com.sprint.mission.discodeit.common.exception.channel.ChannelNotFoundException;
+import com.sprint.mission.discodeit.common.exception.message.MessageNotFoundException;
+import com.sprint.mission.discodeit.common.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.message.dto.MessageCreateRequest;
 import com.sprint.mission.discodeit.message.dto.MessageDto;
 import com.sprint.mission.discodeit.message.dto.MessageUpdateRequest;
@@ -18,6 +21,7 @@ import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BasicMessageService implements MessageService {
 
   private final JPAMessageRepository jpaMessageRepository;
@@ -43,13 +48,18 @@ public class BasicMessageService implements MessageService {
   public MessageDto create(MessageCreateRequest request,
       List<BinaryContentCreateRequest> binaryContentCreateRequests) {
 
+    log.info("[MESSAGE_CREATE] 메시지 생성 시작 : content={}, channelId={}, authorId={}",
+        request.content(), request.channelId(), request.authorId());
+
     Channel channel = jpaChannelRepository.findById(request.channelId())
-        .orElseThrow(() -> new NoSuchElementException("Channel not found"));
+        .orElseThrow(() -> new ChannelNotFoundException(Map.of("channelId", request.channelId())));
     User author = jpaUserRepository.findById(request.authorId())
-        .orElseThrow(() -> new NoSuchElementException("User not found"));
+        .orElseThrow(() -> new UserNotFoundException(Map.of("userId", request.authorId())));
 
     List<BinaryContent> attachments = binaryContentCreateRequests.stream()
         .map(req -> {
+          log.info("[MESSAGE_CREATE] 첨부파일 저장 시작 : fileName={}, size={}",
+              req.fileName(), req.bytes().length);
           BinaryContent binaryContent = new BinaryContent(
               req.fileName(),
               (long) req.bytes().length,
@@ -57,6 +67,8 @@ public class BasicMessageService implements MessageService {
           );
           BinaryContent savedBinaryContent = jpaBinaryContentRepository.save(binaryContent);
           binaryContentStorage.put(savedBinaryContent.getId(), req.bytes());
+          log.info("[MESSAGE_CREATE] 첨부파일 저장 완료 : binaryContentId={}",
+              savedBinaryContent.getId());
           return savedBinaryContent;
         })
         .toList();
@@ -64,6 +76,8 @@ public class BasicMessageService implements MessageService {
     Message message = new Message(request.content(), channel, author,
         attachments);
     Message savedMessage = jpaMessageRepository.save(message);
+    log.info("[MESSAGE_CREATE] 메시지 생성 완료 id={}, channel={}, author={}",
+        message.getId(), message.getChannel(), message.getAuthor());
     return messageMapper.toDto(savedMessage);
   }
 
@@ -73,7 +87,7 @@ public class BasicMessageService implements MessageService {
     return jpaMessageRepository.findById(messageId)
         .map(messageMapper::toDto)
         .orElseThrow(
-            () -> new NoSuchElementException("Message with id " + messageId + " not found"));
+            () -> new MessageNotFoundException(Map.of("messageId", messageId)));
   }
 
   @Override
@@ -94,18 +108,23 @@ public class BasicMessageService implements MessageService {
   @Override
   @Transactional
   public MessageDto update(UUID messageId, MessageUpdateRequest request) {
+    log.info("[MESSAGE_UPDATE] 메시지 수정 시작 : messageId={}, messageNewContent={}",
+        messageId, request.newContent());
     Message message = jpaMessageRepository.findById(messageId)
-        .orElseThrow(() -> new NoSuchElementException("Message not found"));
+        .orElseThrow(() -> new MessageNotFoundException(Map.of("messageId", messageId)));
     message.update(request.newContent());
+    log.info("[MESSAGE_UPDATE] 메시지 수정 완료 : messageId={}, messageNewContent={}",
+        messageId, request.newContent());
     return messageMapper.toDto(message);
   }
 
   @Override
   @Transactional
   public void delete(UUID messageId) {
+    log.info("[MESSAGE_DELETE] 메시지 삭제 시작 : messageId={}", messageId);
     Message message = jpaMessageRepository.findById(messageId)
-        .orElseThrow(() -> new NoSuchElementException("Message not found"));
+        .orElseThrow(() -> new MessageNotFoundException(Map.of("messageId", messageId)));
     jpaMessageRepository.delete(message);
+    log.info("[MESSAGE_DELETE] 메시지 삭제 완료 : messageId={}", messageId);
   }
-
 }

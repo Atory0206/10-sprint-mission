@@ -11,4 +11,5 @@ public interface JPAChannelRepository extends JpaRepository<Channel, UUID> {
 
   List<Channel> findByTypeOrIdIn(ChannelType type, List<UUID> ids);
 
+
 }
