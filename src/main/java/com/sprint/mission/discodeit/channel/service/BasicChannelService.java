@@ -47,6 +47,10 @@ public class BasicChannelService implements ChannelService {
 
     List<User> participants = jpaUserRepository.findAllById(request.participantIds());
 
+    if (participants.isEmpty()) {
+      throw new IllegalArgumentException("참여자가 없습니다.");
+    } // 나중에 수정 필요
+
     List<ReadStatus> readStatuses = participants.stream()
         .map(user -> new ReadStatus(user, createdChannel, Instant.now()))
         .toList();
@@ -61,6 +65,10 @@ public class BasicChannelService implements ChannelService {
   public ChannelDto create(ChannelCreatePublicRequest request) {
     log.info("[CHANNEL_CREATE] public 채널 생성 시작 : channelName={}, channelDescription={}",
         request.name(), request.description());
+
+    if (request.name() == null || request.name().isBlank()) {
+      throw new IllegalArgumentException("채널 이름은 필수입니다.");
+    } // 나중에 수정 필요
 
     Channel channel = new Channel(ChannelType.PUBLIC, request.name(), request.description());
     jpaChannelRepository.save(channel);
@@ -81,7 +89,7 @@ public class BasicChannelService implements ChannelService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<ChannelDto> findAllByUserId(UUID userId) {
+  public List<ChannelDto> findByUserId(UUID userId) {
     List<UUID> subscribedIds = jpaReadStatusRepository.findAllByUserId(userId)
         .stream()
         .map(rs -> rs.getChannel().getId())

@@ -52,15 +52,10 @@ public class UserController {
       @Parameter(description = "User 프로필 이미지")
       @RequestPart(required = false) MultipartFile profile) {
 
-    log.debug("[USER_CONTROLLER] 유저 생성 요청 userName={}, userEmail={}",
-        userCreateRequest.username(), userCreateRequest.email());
-
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
     UserDto createdUser = userService.create(userCreateRequest, profileRequest);
 
-    log.debug("[USER_CONTROLLER] 유저 생성 응답 userId={}, userName={}, userEmail={}",
-        createdUser.id(), createdUser.username(), createdUser.email());
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(createdUser);
@@ -99,14 +94,10 @@ public class UserController {
       @Parameter(description = "수정할 User 프로필 이미지")
       @RequestPart(value = "profile", required = false) MultipartFile profile) {
 
-    log.debug("[USER_CONTROLLER] 유저 정보 수정 요청 userName={}, userEmail={}",
-        userUpdateRequest.newUsername(), userUpdateRequest.newEmail());
-
     Optional<BinaryContentCreateRequest> profileRequest = Optional.ofNullable(profile)
         .flatMap(this::resolveProfileRequest);
     UserDto updatedUser = userService.update(userId, userUpdateRequest, profileRequest);
-    log.debug("[USER_CONTROLLER] 유저 정보 수정 응답 userId={}, userName={}, userEmail={}",
-        updatedUser.id(), updatedUser.username(), updatedUser.email());
+
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedUser);
@@ -127,11 +118,7 @@ public class UserController {
   public ResponseEntity<Void> deleteUser(
       @Parameter(description = "삭제할 User ID")
       @PathVariable UUID userId) {
-    log.debug("[USER_CONTROLLER] 유저 삭제 요청 userId={}",
-        userId);
     userService.delete(userId);
-    log.debug("[USER_CONTROLLER] 유저 삭제 응답 userId={}",
-        userId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();

@@ -64,11 +64,6 @@ public class MessageController {
       @RequestPart(value = "attachments", required = false)
       List<MultipartFile> attachments) {
 
-    log.debug("[MESSAGE_CONTROLLER] 메시지 생성 요청 : channelId={}, authorId={}, attachmentCount={}",
-        messageCreateRequest.channelId(),
-        messageCreateRequest.authorId(),
-        attachments != null ? attachments.size() : 0);
-
     List<BinaryContentCreateRequest> attachmentRequests = Optional.ofNullable(attachments)
         .map(files -> files.stream()
             .map(file -> {
@@ -86,7 +81,6 @@ public class MessageController {
         .orElse(new ArrayList<>());
 
     MessageDto createdMessage = messageService.create(messageCreateRequest, attachmentRequests);
-    log.debug("[MESSAGE_CONTROLLER] 메시지 생성 응답 : messageId={}", createdMessage.id());
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -111,15 +105,10 @@ public class MessageController {
       @Parameter(description = "수정할 Message ID")
       @PathVariable UUID messageId,
       @Parameter(description = "수정할 Message 내용")
-      @RequestBody MessageUpdateRequest request) {
-
-    log.debug("[MESSAGE_CONTROLLER] 메시지 수정 요청 : messageId={}, messageNewContent={}",
-        messageId, request.newContent());
+      @Valid @RequestBody MessageUpdateRequest request) {
 
     MessageDto updatedMessage = messageService.update(messageId, request);
 
-    log.debug("[MESSAGE_CONTROLLER] 메시지 수정 응답 : messageId={}, messageContent={}",
-        updatedMessage.id(), updatedMessage.content());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedMessage);
@@ -142,11 +131,7 @@ public class MessageController {
       @Parameter(description = "삭제할 Message ID")
       @PathVariable UUID messageId) {
 
-    log.debug("[MESSAGE_CONTROLLER] 메시지 삭제 요청 messageId={}", messageId);
-
     messageService.delete(messageId);
-
-    log.debug("[MESSAGE_CONTROLLER] 메시지 삭제 응답 messageId={}", messageId);
 
     return ResponseEntity.
         status(HttpStatus.NO_CONTENT)

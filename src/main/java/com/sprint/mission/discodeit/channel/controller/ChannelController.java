@@ -44,13 +44,7 @@ public class ChannelController {
       @Parameter(description = "Public Channel 생성 정보")
       @Valid @RequestBody ChannelCreatePublicRequest request) {
 
-    log.debug("[CHANNEL_CONTROLLER] 채널 생성 요청 channelName={}, channelDesc={}",
-        request.name(), request.description());
-
     ChannelDto createdChannel = channelService.create(request);
-
-    log.debug("[CHANNEL_CONTROLLER] 채널 생성 응답 channelId={}, channelName={}, channelDesc={}",
-        createdChannel.id(), createdChannel.name(), createdChannel.description());
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -68,11 +62,7 @@ public class ChannelController {
       @Parameter(description = "Private Channel 생성 정보")
       @RequestBody ChannelCreatePrivateRequest request) {
 
-    log.debug("[CHANNEL_CONTROLLER] private 채널 생성 요청");
-
     ChannelDto createdChannel = channelService.create(request);
-
-    log.debug("[CHANNEL_CONTROLLER] private 채널 생성 응답 channelId={}", createdChannel.id());
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -102,10 +92,9 @@ public class ChannelController {
       @PathVariable UUID channelId,
       @Parameter(description = "수정할 Channel 정보")
       @Valid @RequestBody ChannelUpdateRequest request) {
-    log.debug("[CHANNEL_CONTROLLER] 채널 수정 요청 channelId={}", channelId);
+
     ChannelDto updatedChannel = channelService.update(channelId, request);
-    log.debug("[CHANNEL_CONTROLLER] 채널 수정 응답 channelId={}, newChannelName={}, newChannelDesc={}",
-        updatedChannel.id(), updatedChannel.name(), updatedChannel.description());
+
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(updatedChannel);
@@ -129,9 +118,9 @@ public class ChannelController {
   @DeleteMapping("/{channelId}")
   public ResponseEntity<Void> deleteChannel(
       @Parameter(description = "삭제할 Channel ID") @PathVariable UUID channelId) {
-    log.debug("[CHANNEL_CONTROLLER] 채널 삭제 요청 channelId={}", channelId);
+
     channelService.delete(channelId);
-    log.debug("[CHANNEL_CONTROLLER] 채널 삭제 응답 channelId={}", channelId);
+
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();
@@ -149,7 +138,7 @@ public class ChannelController {
   @GetMapping
   public ResponseEntity<List<ChannelDto>> findAllByUser(
       @Parameter(description = "조회할 User ID") @RequestParam UUID userId) {
-    List<ChannelDto> channels = channelService.findAllByUserId(userId);
+    List<ChannelDto> channels = channelService.findByUserId(userId);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(channels);

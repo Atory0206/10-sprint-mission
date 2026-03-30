@@ -42,7 +42,9 @@ public class GlobalExceptionHandler {
         .collect(Collectors.toMap(
             FieldError::getField,
             fieldError -> Optional.ofNullable(fieldError.getDefaultMessage())
-                .orElse("유효하지 않은 값입니다.")
+                .orElse("유효하지 않은 값입니다."),
+            (existing, replacement) -> existing
+
         ));
 
     return ResponseEntity
