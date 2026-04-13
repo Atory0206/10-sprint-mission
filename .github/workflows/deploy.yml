@@ -46,11 +46,12 @@ jobs:
       - name: Update ECS task definition
         id: update-task-def
         run: |
-          TASK_DEF=$(aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_DEFINITION }})
-          NEW_TASK_DEF=$(echo $TASK_DEF | jq '.taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .placementConstraints, .compatibilities, .registeredAt, .registeredBy)' | \
-            jq '.containerDefinitions[0].image = "${{ vars.ECR_REPOSITORY_URI }}:${{ github.sha }}"')
+          TASK_DEF=$(aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_DEFINITION }} --query 'taskDefinition' --output json)
+          NEW_TASK_DEF=$(echo $TASK_DEF | jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .placementConstraints, .compatibilities, .registeredAt, .registeredBy)')
+          NEW_TASK_DEF=$(echo $NEW_TASK_DEF | jq '.containerDefinitions[0].image = "${{ vars.ECR_REPOSITORY_URI }}:${{ github.sha }}"')
           NEW_REVISION=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" | jq -r '.taskDefinition.taskDefinitionArn')
           echo "task_def_arn=$NEW_REVISION" >> $GITHUB_OUTPUT
+          echo "Registered task definition: $NEW_REVISION"
 
       - name: Stop existing ECS service
         run: |
