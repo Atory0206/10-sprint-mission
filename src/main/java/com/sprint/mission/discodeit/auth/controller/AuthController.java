@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.auth.controller;
 
 import com.sprint.mission.discodeit.auth.DiscodeitUserDetails;
+import com.sprint.mission.discodeit.auth.service.AuthService;
 import com.sprint.mission.discodeit.user.dto.UserRoleUpdateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.service.UserService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
   private final UserService userService;
+  private final AuthService authService;
 
   @GetMapping("/csrf-token")
   public ResponseEntity<Void> getCsrfToken(CsrfToken csrfToken) {
@@ -37,6 +39,7 @@ public class AuthController {
   public ResponseEntity<UserDto> updateRole(
       @RequestBody UserRoleUpdateRequest request) {
     UserDto updatedUser = userService.updateRole(request);
+    authService.expireUserSession(request.userId());
     return ResponseEntity.ok(updatedUser);
   }
 }

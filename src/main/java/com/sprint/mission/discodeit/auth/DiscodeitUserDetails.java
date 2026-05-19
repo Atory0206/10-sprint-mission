@@ -45,4 +45,21 @@ public class DiscodeitUserDetails implements UserDetails {
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority("ROLE_" + userDto.role().name()));
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof DiscodeitUserDetails)) {
+      return false;
+    }
+    DiscodeitUserDetails other = (DiscodeitUserDetails) obj;
+    return this.userDto.id().equals(other.userDto.id());
+  }
+
+  @Override
+  public int hashCode() {
+    return this.userDto.id().hashCode();
+  }
 }

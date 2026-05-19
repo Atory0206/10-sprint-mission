@@ -13,11 +13,14 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 
 @Configuration
@@ -32,7 +35,7 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler,
-      LoginFailureHandler loginFailureHandler)
+      LoginFailureHandler loginFailureHandler, SessionRegistry sessionRegistry)
       throws Exception {
     http
         .csrf(csrf -> csrf
@@ -67,7 +70,8 @@ public class SecurityConfig {
                 "/swagger-ui.html"
             ).permitAll()
             .anyRequest().authenticated()
-        ).exceptionHandling(ex -> ex
+        )
+        .exceptionHandling(ex -> ex
             // 인증 실패 (로그인 안함) 401 처리
             .authenticationEntryPoint((request, response, authException) -> {
               response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -77,8 +81,13 @@ public class SecurityConfig {
               response.sendError(HttpServletResponse.SC_FORBIDDEN);
             })
         )
+        .sessionManagement(management -> management
+            .sessionConcurrency(concurrency -> concurrency
+                .maximumSessions(1)
+                .sessionRegistry(sessionRegistry)
+            )
 
-    ;
+        );
 
     return http.build();
   }
@@ -97,6 +106,16 @@ public class SecurityConfig {
     DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
     handler.setRoleHierarchy(roleHierarchy);
     return handler;
+  }
+
+  @Bean
+  public SessionRegistry sessionRegistry() {
+    return new SessionRegistryImpl();
+  }
+
+  @Bean
+  public HttpSessionEventPublisher httpSessionEventPublisher() {
+    return new HttpSessionEventPublisher();
   }
 
 
