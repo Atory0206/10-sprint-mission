@@ -6,8 +6,10 @@ import com.sprint.mission.discodeit.binarycontent.repository.JPABinaryContentRep
 import com.sprint.mission.discodeit.common.exception.user.UserAlreadyExistException;
 import com.sprint.mission.discodeit.common.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.storage.BinaryContentStorage;
+import com.sprint.mission.discodeit.user.Role;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
+import com.sprint.mission.discodeit.user.dto.UserRoleUpdateRequest;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.mapper.UserMapper;
@@ -15,6 +17,7 @@ import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import com.sprint.mission.discodeit.user.entity.UserStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,7 +72,8 @@ public class BasicUserService implements UserService {
         request.username(),
         request.email(),
         encodedPassword,
-        profile
+        profile,
+        Role.USER
     );
     UserStatus userStatus = new UserStatus(user);
     user.setUserStatus(userStatus);
@@ -153,4 +157,13 @@ public class BasicUserService implements UserService {
     log.info("[USER_DELETE] 유저 삭제 완료 userId={}", userId);
   }
 
+  @Override
+  @Transactional
+  @PreAuthorize("hasRole('ADMIN')")
+  public UserDto updateRole(UserRoleUpdateRequest request) {
+    User user = jpaUserRepository.findById(request.userId())
+        .orElseThrow(() -> new UserNotFoundException(Map.of("userId", request.userId())));
+    user.updateRole(request.newRole());
+    return userMapper.toDto(user);
+  }
 }

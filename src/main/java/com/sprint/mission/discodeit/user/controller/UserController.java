@@ -57,7 +57,7 @@ public class UserController {
     UserDto createdUser = userService.create(userCreateRequest, profileRequest);
 
     return ResponseEntity
-        .status(HttpStatus.CREATED)
+        .status(HttpStatus.OK)
         .body(createdUser);
   }
 

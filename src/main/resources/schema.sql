@@ -25,7 +25,8 @@ CREATE TABLE users
     username   VARCHAR(50)  NOT NULL UNIQUE,
     email      VARCHAR(100) NOT NULL UNIQUE,
     password   VARCHAR(60)  NOT NULL,
-    profile_id UUID UNIQUE  REFERENCES binary_contents (id) ON DELETE SET NULL
+    profile_id UUID UNIQUE  REFERENCES binary_contents (id) ON DELETE SET NULL,
+    role       varchar(20)  NOT NULL
 );
 
 CREATE TABLE messages
