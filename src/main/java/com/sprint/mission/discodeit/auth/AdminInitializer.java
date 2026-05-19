@@ -2,7 +2,6 @@ package com.sprint.mission.discodeit.auth;
 
 import com.sprint.mission.discodeit.user.Role;
 import com.sprint.mission.discodeit.user.entity.User;
-import com.sprint.mission.discodeit.user.entity.UserStatus;
 import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -22,10 +21,7 @@ public class AdminInitializer implements ApplicationRunner {
     if (!jpaUserRepository.existsByRole(Role.ADMIN)) {
       User admin = new User("admin", "admin@admin.com", passwordEncoder.encode("admin1234"), null,
           Role.ADMIN);
-      UserStatus userStatus = new UserStatus(admin);
-      admin.setUserStatus(userStatus);
       jpaUserRepository.save(admin);
     }
-
   }
 }

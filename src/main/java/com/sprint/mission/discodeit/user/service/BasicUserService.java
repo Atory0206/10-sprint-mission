@@ -14,7 +14,6 @@ import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
 import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
-import com.sprint.mission.discodeit.user.entity.UserStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,8 +74,6 @@ public class BasicUserService implements UserService {
         profile,
         Role.USER
     );
-    UserStatus userStatus = new UserStatus(user);
-    user.setUserStatus(userStatus);
 
     User savedUser = jpaUserRepository.save(user);
 

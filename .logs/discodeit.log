@@ -29878,3 +29878,135 @@ ROLE_CHANNEL_MANAGER > ROLE_USER
 26-05-19 10:47:10.814 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 26-05-19 10:47:10.817 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown initiated...
 26-05-19 10:47:10.823 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown completed.
+26-05-19 16:46:25.315 [background-preinit] INFO  o.h.validator.internal.util.Version  - HV000001: Hibernate Validator 8.0.1.Final
+26-05-19 16:46:25.421 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Starting DiscodeitApplication using Java 17.0.17 with PID 12232 (C:\codeit\sprint_mission_3_base\build\classes\java\main started by HP in C:\codeit\sprint_mission_3_base)
+26-05-19 16:46:25.422 [main] DEBUG c.s.m.discodeit.DiscodeitApplication - Running with Spring Boot v3.4.0, Spring v6.2.0
+26-05-19 16:46:25.422 [main] INFO  c.s.m.discodeit.DiscodeitApplication - The following 1 profile is active: "dev"
+26-05-19 16:46:26.961 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+26-05-19 16:46:27.094 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 119 ms. Found 5 JPA repository interfaces.
+26-05-19 16:46:28.019 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat initialized with port 8080 (http)
+26-05-19 16:46:28.035 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Initializing ProtocolHandler ["http-nio-8080"]
+26-05-19 16:46:28.036 [main] INFO  o.a.catalina.core.StandardService    - Starting service [Tomcat]
+26-05-19 16:46:28.037 [main] INFO  o.a.catalina.core.StandardEngine     - Starting Servlet engine: [Apache Tomcat/10.1.33]
+26-05-19 16:46:28.138 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring embedded WebApplicationContext
+26-05-19 16:46:28.139 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2646 ms
+26-05-19 16:46:28.511 [main] INFO  o.h.jpa.internal.util.LogHelper      - HHH000204: Processing PersistenceUnitInfo [name: default]
+26-05-19 16:46:28.600 [main] INFO  org.hibernate.Version                - HHH000412: Hibernate ORM core version 6.6.2.Final
+26-05-19 16:46:28.648 [main] INFO  o.h.c.i.RegionFactoryInitiator       - HHH000026: Second-level cache disabled
+26-05-19 16:46:29.020 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo  - No LoadTimeWeaver setup: ignoring JPA class transformer
+26-05-19 16:46:29.059 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Starting...
+26-05-19 16:46:29.317 [main] INFO  com.zaxxer.hikari.pool.HikariPool    - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7d75940
+26-05-19 16:46:29.319 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Start completed.
+26-05-19 16:46:29.374 [main] WARN  org.hibernate.orm.deprecation        - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+26-05-19 16:46:29.394 [main] INFO  o.hibernate.orm.connections.pooling  - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+26-05-19 16:46:30.686 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+26-05-19 16:46:30.689 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+26-05-19 16:46:31.121 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - setHierarchy() - The following role hierarchy was set: ROLE_ADMIN > ROLE_CHANNEL_MANAGER
+ROLE_CHANNEL_MANAGER > ROLE_USER
+26-05-19 16:46:31.122 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneStepMap() - From role ROLE_ADMIN one can reach role ROLE_CHANNEL_MANAGER in one step.
+26-05-19 16:46:31.123 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneStepMap() - From role ROLE_CHANNEL_MANAGER one can reach role ROLE_USER in one step.
+26-05-19 16:46:31.123 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneOrMoreStepsMap() - From role ROLE_ADMIN one can reach [ROLE_USER, ROLE_CHANNEL_MANAGER] in one or more steps.
+26-05-19 16:46:31.123 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneOrMoreStepsMap() - From role ROLE_CHANNEL_MANAGER one can reach [ROLE_USER] in one or more steps.
+26-05-19 16:46:32.117 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+26-05-19 16:46:32.995 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+26-05-19 16:46:33.025 [main] TRACE o.s.s.c.a.a.c.AuthenticationConfiguration$EnableGlobalAuthenticationAutowiredConfigurer - Eagerly initializing {securityConfig=com.sprint.mission.discodeit.common.config.SecurityConfig$$SpringCGLIB$$0@48ee3c2d}
+26-05-19 16:46:33.034 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name discodeitUserDetailsService
+26-05-19 16:46:33.136 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+26-05-19 16:46:33.610 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver  - Exposing 4 endpoints beneath base path '/actuator'
+26-05-19 16:46:33.739 [main] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CsrfFilter, LogoutFilter, UsernamePasswordAuthenticationFilter, ConcurrentSessionFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+26-05-19 16:46:34.365 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Starting ProtocolHandler ["http-nio-8080"]
+26-05-19 16:46:34.387 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat started on port 8080 (http) with context path '/'
+26-05-19 16:46:34.402 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Started DiscodeitApplication in 10.097 seconds (process running for 11.157)
+26-05-19 16:46:34.503 [main] DEBUG org.hibernate.SQL                    - 
+    select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.role=? 
+    fetch
+        first ? rows only
+26-05-19 16:46:34.510 [main] TRACE org.hibernate.orm.jdbc.bind          - binding parameter (1:VARCHAR) <- [ADMIN]
+26-05-19 16:46:34.510 [main] TRACE org.hibernate.orm.jdbc.bind          - binding parameter (2:INTEGER) <- [1]
+26-05-19 16:46:34.533 [main] TRACE org.hibernate.orm.jdbc.extract       - extracted value (1:UUID) -> [c9250cab-cae8-4509-8180-0da4b11066e8]
+26-05-19 16:46:34.831 [RMI TCP Connection(8)-172.30.1.47] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-05-19 16:46:34.832 [RMI TCP Connection(8)-172.30.1.47] INFO  o.s.web.servlet.DispatcherServlet    - Initializing Servlet 'dispatcherServlet'
+26-05-19 16:46:34.833 [RMI TCP Connection(8)-172.30.1.47] INFO  o.s.web.servlet.DispatcherServlet    - Completed initialization in 1 ms
+26-05-19 16:46:47.528 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Commencing graceful shutdown. Waiting for active requests to complete
+26-05-19 16:46:48.070 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Graceful shutdown complete
+26-05-19 16:46:48.078 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+26-05-19 16:46:48.080 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown initiated...
+26-05-19 16:46:48.086 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown completed.
+26-05-19 16:46:52.590 [background-preinit] INFO  o.h.validator.internal.util.Version  - HV000001: Hibernate Validator 8.0.1.Final
+26-05-19 16:46:52.652 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Starting DiscodeitApplication using Java 17.0.17 with PID 23436 (C:\codeit\sprint_mission_3_base\build\classes\java\main started by HP in C:\codeit\sprint_mission_3_base)
+26-05-19 16:46:52.652 [main] DEBUG c.s.m.discodeit.DiscodeitApplication - Running with Spring Boot v3.4.0, Spring v6.2.0
+26-05-19 16:46:52.653 [main] INFO  c.s.m.discodeit.DiscodeitApplication - The following 1 profile is active: "dev"
+26-05-19 16:46:54.002 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+26-05-19 16:46:54.125 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 113 ms. Found 5 JPA repository interfaces.
+26-05-19 16:46:54.925 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat initialized with port 8080 (http)
+26-05-19 16:46:54.938 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Initializing ProtocolHandler ["http-nio-8080"]
+26-05-19 16:46:54.941 [main] INFO  o.a.catalina.core.StandardService    - Starting service [Tomcat]
+26-05-19 16:46:54.941 [main] INFO  o.a.catalina.core.StandardEngine     - Starting Servlet engine: [Apache Tomcat/10.1.33]
+26-05-19 16:46:55.034 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring embedded WebApplicationContext
+26-05-19 16:46:55.035 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2325 ms
+26-05-19 16:46:55.399 [main] INFO  o.h.jpa.internal.util.LogHelper      - HHH000204: Processing PersistenceUnitInfo [name: default]
+26-05-19 16:46:55.465 [main] INFO  org.hibernate.Version                - HHH000412: Hibernate ORM core version 6.6.2.Final
+26-05-19 16:46:55.502 [main] INFO  o.h.c.i.RegionFactoryInitiator       - HHH000026: Second-level cache disabled
+26-05-19 16:46:55.820 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo  - No LoadTimeWeaver setup: ignoring JPA class transformer
+26-05-19 16:46:55.857 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Starting...
+26-05-19 16:46:56.057 [main] INFO  com.zaxxer.hikari.pool.HikariPool    - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2d758472
+26-05-19 16:46:56.059 [main] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Start completed.
+26-05-19 16:46:56.097 [main] WARN  org.hibernate.orm.deprecation        - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+26-05-19 16:46:56.115 [main] INFO  o.hibernate.orm.connections.pooling  - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+26-05-19 16:46:57.300 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator   - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+26-05-19 16:46:57.304 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+26-05-19 16:46:57.746 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - setHierarchy() - The following role hierarchy was set: ROLE_ADMIN > ROLE_CHANNEL_MANAGER
+ROLE_CHANNEL_MANAGER > ROLE_USER
+26-05-19 16:46:57.746 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneStepMap() - From role ROLE_ADMIN one can reach role ROLE_CHANNEL_MANAGER in one step.
+26-05-19 16:46:57.746 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneStepMap() - From role ROLE_CHANNEL_MANAGER one can reach role ROLE_USER in one step.
+26-05-19 16:46:57.746 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneOrMoreStepsMap() - From role ROLE_ADMIN one can reach [ROLE_USER, ROLE_CHANNEL_MANAGER] in one or more steps.
+26-05-19 16:46:57.746 [main] DEBUG o.s.s.a.h.RoleHierarchyImpl          - buildRolesReachableInOneOrMoreStepsMap() - From role ROLE_CHANNEL_MANAGER one can reach [ROLE_USER] in one or more steps.
+26-05-19 16:46:58.608 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+26-05-19 16:46:59.412 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+26-05-19 16:46:59.444 [main] TRACE o.s.s.c.a.a.c.AuthenticationConfiguration$EnableGlobalAuthenticationAutowiredConfigurer - Eagerly initializing {securityConfig=com.sprint.mission.discodeit.common.config.SecurityConfig$$SpringCGLIB$$0@36e3321e}
+26-05-19 16:46:59.451 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name discodeitUserDetailsService
+26-05-19 16:46:59.544 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+26-05-19 16:47:00.024 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver  - Exposing 4 endpoints beneath base path '/actuator'
+26-05-19 16:47:00.148 [main] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CsrfFilter, LogoutFilter, UsernamePasswordAuthenticationFilter, ConcurrentSessionFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+26-05-19 16:47:00.756 [main] INFO  o.a.coyote.http11.Http11NioProtocol  - Starting ProtocolHandler ["http-nio-8080"]
+26-05-19 16:47:00.780 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer     - Tomcat started on port 8080 (http) with context path '/'
+26-05-19 16:47:00.793 [main] INFO  c.s.m.discodeit.DiscodeitApplication - Started DiscodeitApplication in 8.858 seconds (process running for 9.678)
+26-05-19 16:47:00.894 [main] DEBUG org.hibernate.SQL                    - 
+    select
+        u1_0.id 
+    from
+        users u1_0 
+    where
+        u1_0.role=? 
+    fetch
+        first ? rows only
+26-05-19 16:47:00.902 [main] TRACE org.hibernate.orm.jdbc.bind          - binding parameter (1:VARCHAR) <- [ADMIN]
+26-05-19 16:47:00.902 [main] TRACE org.hibernate.orm.jdbc.bind          - binding parameter (2:INTEGER) <- [1]
+26-05-19 16:47:00.922 [main] TRACE org.hibernate.orm.jdbc.extract       - extracted value (1:UUID) -> [c9250cab-cae8-4509-8180-0da4b11066e8]
+26-05-19 16:47:01.593 [RMI TCP Connection(5)-172.30.1.47] INFO  o.a.c.c.C.[Tomcat].[localhost].[/]   - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-05-19 16:47:01.593 [RMI TCP Connection(5)-172.30.1.47] INFO  o.s.web.servlet.DispatcherServlet    - Initializing Servlet 'dispatcherServlet'
+26-05-19 16:47:01.595 [RMI TCP Connection(5)-172.30.1.47] INFO  o.s.web.servlet.DispatcherServlet    - Completed initialization in 1 ms
+26-05-19 16:48:59.500 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Commencing graceful shutdown. Waiting for active requests to complete
+26-05-19 16:49:00.136 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown    - Graceful shutdown complete
+26-05-19 16:49:00.145 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+26-05-19 16:49:00.147 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown initiated...
+26-05-19 16:49:00.153 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource   - HikariPool-1 - Shutdown completed.

@@ -39,15 +39,6 @@ CREATE TABLE messages
     author_id  UUID        REFERENCES users (id) ON DELETE SET NULL
 );
 
-CREATE TABLE user_statuses
-(
-    id             UUID PRIMARY KEY,
-    created_at     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     TIMESTAMPTZ,
-    user_id        UUID        NOT NULL UNIQUE REFERENCES users (id) ON DELETE CASCADE,
-    last_active_at TIMESTAMPTZ NOT NULL
-);
-
 CREATE TABLE read_statuses
 (
     id           UUID PRIMARY KEY,
