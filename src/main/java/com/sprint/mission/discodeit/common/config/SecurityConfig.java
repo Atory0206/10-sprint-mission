@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.common.config;
 
+import com.sprint.mission.discodeit.auth.DiscodeitUserDetailsService;
 import com.sprint.mission.discodeit.auth.LoginFailureHandler;
 import com.sprint.mission.discodeit.auth.LoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,7 +36,8 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler,
-      LoginFailureHandler loginFailureHandler, SessionRegistry sessionRegistry)
+      LoginFailureHandler loginFailureHandler, SessionRegistry sessionRegistry,
+      DiscodeitUserDetailsService discodeitUserDetailsService)
       throws Exception {
     http
         .csrf(csrf -> csrf
@@ -87,6 +89,12 @@ public class SecurityConfig {
                 .sessionRegistry(sessionRegistry)
             )
 
+        )
+        .rememberMe(remember -> remember
+            .key("my-remember-key")
+            .tokenValiditySeconds(7 * 24 * 60 * 60)
+            .rememberMeParameter("remember-me")
+            .userDetailsService(discodeitUserDetailsService)
         );
 
     return http.build();
@@ -117,6 +125,4 @@ public class SecurityConfig {
   public HttpSessionEventPublisher httpSessionEventPublisher() {
     return new HttpSessionEventPublisher();
   }
-
-
 }

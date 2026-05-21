@@ -102,6 +102,7 @@ public class BasicUserService implements UserService {
 
   @Override
   @Transactional
+  @PreAuthorize("#userId == authentication.principal.userDto.id")
   public UserDto update(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
 
@@ -146,6 +147,7 @@ public class BasicUserService implements UserService {
 
   @Override
   @Transactional
+  @PreAuthorize("#userId == authentication.principal.userDto.id")
   public void delete(UUID userId) {
     log.info("[USER_DELETE] 유저 삭제 시작 userId={}", userId);
     User user = jpaUserRepository.findById(userId)
