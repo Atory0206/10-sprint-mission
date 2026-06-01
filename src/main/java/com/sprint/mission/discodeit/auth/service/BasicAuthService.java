@@ -3,6 +3,8 @@ package com.sprint.mission.discodeit.auth.service;
 import com.sprint.mission.discodeit.auth.DiscodeitUserDetails;
 import com.sprint.mission.discodeit.common.exception.auth.TokenInvalidException;
 import com.sprint.mission.discodeit.jwt.JwtDto;
+import com.sprint.mission.discodeit.jwt.JwtInformation;
+import com.sprint.mission.discodeit.jwt.JwtRegistry;
 import com.sprint.mission.discodeit.jwt.JwtTokenProvider;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +26,7 @@ public class BasicAuthService implements AuthService {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final UserDetailsService userDetailsService;
+  private final JwtRegistry jwtRegistry;
   //private final SessionRegistry sessionRegistry;
 
   @Override
@@ -41,13 +44,16 @@ public class BasicAuthService implements AuthService {
     String newAccessToken = jwtTokenProvider.generateToken(newClaims, username);
     String rotationToken = jwtTokenProvider.generateRefreshToken(username);
 
+    DiscodeitUserDetails discodeitUserDetails = (DiscodeitUserDetails) userDetails;
+    UserDto userDto = discodeitUserDetails.getUserDto();
+
+    JwtInformation newJwtInformation = new JwtInformation(userDto, newAccessToken, rotationToken);
+    jwtRegistry.rotateJwtInformation(refreshToken, newJwtInformation);
+
     Cookie refreshCookie = new Cookie("REFRESH_TOKEN", rotationToken);
     refreshCookie.setHttpOnly(true);
     refreshCookie.setPath("/");
     response.addCookie(refreshCookie);
-
-    DiscodeitUserDetails discodeitUserDetails = (DiscodeitUserDetails) userDetails;
-    UserDto userDto = discodeitUserDetails.getUserDto();
 
     return new JwtDto(userDto, newAccessToken);
   }

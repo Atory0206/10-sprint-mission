@@ -18,4 +18,6 @@ public interface JwtRegistry {
 
   void clearExpiredJwtInformation();
 
+  void invalidateJwtInformationByRefreshToken(String refreshToken);
+
 }

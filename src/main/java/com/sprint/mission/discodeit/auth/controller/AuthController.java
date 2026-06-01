@@ -50,7 +50,6 @@ public class AuthController {
   public ResponseEntity<UserDto> updateRole(
       @RequestBody UserRoleUpdateRequest request) {
     UserDto updatedUser = userService.updateRole(request);
-//    authService.expireUserSession(request.userId()); 세션기반 로직
     return ResponseEntity.ok(updatedUser);
   }
 
