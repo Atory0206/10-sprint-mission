@@ -78,7 +78,9 @@ public class BasicReadStatusService implements ReadStatusService {
     if (request.newLastReadAt() != null) {
       readStatus.updateLastRead(request.newLastReadAt());
     }
-    readStatus.updateNotificationEnabled(request.newNotificationEnabled());
+    if (request.newNotificationEnabled() != null) {
+      readStatus.updateNotificationEnabled(request.newNotificationEnabled());
+    }
     return readStatusMapper.toDto(readStatus);
   }
 

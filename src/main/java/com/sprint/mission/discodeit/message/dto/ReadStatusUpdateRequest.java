@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public record ReadStatusUpdateRequest(
     Instant newLastReadAt,
-    boolean newNotificationEnabled
+    Boolean newNotificationEnabled
 ) {
 
 }

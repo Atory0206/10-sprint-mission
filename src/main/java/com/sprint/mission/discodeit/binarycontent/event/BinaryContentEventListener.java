@@ -17,8 +17,6 @@ public class BinaryContentEventListener {
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void handleBinaryContentCreated(BinaryContentCreatedEvent binaryContentCreatedEvent) {
-    binaryContentStorage.put(binaryContentCreatedEvent.binaryContentId(),
-        binaryContentCreatedEvent.bytes());
     try {
       binaryContentStorage.put(binaryContentCreatedEvent.binaryContentId(),
           binaryContentCreatedEvent.bytes());
