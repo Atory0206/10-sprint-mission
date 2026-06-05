@@ -2,21 +2,23 @@ package com.sprint.mission.discodeit.user.service;
 
 import com.sprint.mission.discodeit.binarycontent.dto.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.binarycontent.entity.BinaryContent;
+import com.sprint.mission.discodeit.binarycontent.event.BinaryContentCreatedEvent;
 import com.sprint.mission.discodeit.binarycontent.repository.JPABinaryContentRepository;
 import com.sprint.mission.discodeit.common.exception.user.UserAlreadyExistException;
 import com.sprint.mission.discodeit.common.exception.user.UserNotFoundException;
 import com.sprint.mission.discodeit.jwt.JwtRegistry;
-import com.sprint.mission.discodeit.storage.BinaryContentStorage;
 import com.sprint.mission.discodeit.user.Role;
 import com.sprint.mission.discodeit.user.dto.UserCreateRequest;
 import com.sprint.mission.discodeit.user.dto.UserDto;
 import com.sprint.mission.discodeit.user.dto.UserRoleUpdateRequest;
 import com.sprint.mission.discodeit.user.dto.UserUpdateRequest;
 import com.sprint.mission.discodeit.user.entity.User;
+import com.sprint.mission.discodeit.user.event.RoleUpdatedEvent;
 import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,8 +35,8 @@ public class BasicUserService implements UserService {
   private final JPABinaryContentRepository JPABinaryContentRepository;
   private final PasswordEncoder passwordEncoder;
   private final UserMapper userMapper;
-  private final BinaryContentStorage binaryContentStorage;
   private final JwtRegistry jwtRegistry;
+  private final ApplicationEventPublisher eventPublisher;
 
 
   @Override
@@ -61,7 +63,9 @@ public class BasicUserService implements UserService {
               profileRequest.contentType()
           );
           BinaryContent savedBinaryContent = JPABinaryContentRepository.save(binaryContent);
-          binaryContentStorage.put(savedBinaryContent.getId(), profileRequest.bytes());
+          eventPublisher.publishEvent(
+              new BinaryContentCreatedEvent(savedBinaryContent.getId(), profileRequest.bytes())
+          );
           log.info("[USER_CREATE] 프로필 요청 저장 : binaryContentID={}", savedBinaryContent.getId());
           return savedBinaryContent;
         })
@@ -136,7 +140,9 @@ public class BasicUserService implements UserService {
           profileRequest.contentType()
       );
       BinaryContent savedBinaryContent = JPABinaryContentRepository.save(newProfile);
-      binaryContentStorage.put(savedBinaryContent.getId(), profileRequest.bytes());
+      eventPublisher.publishEvent(
+          new BinaryContentCreatedEvent(savedBinaryContent.getId(), profileRequest.bytes())
+      );
       user.setProfile(savedBinaryContent);
       log.debug("[USER_UPDATE] 프로필 이미지 수정 완료 : binaryContentId={}", savedBinaryContent.getId());
     });
@@ -164,8 +170,11 @@ public class BasicUserService implements UserService {
   public UserDto updateRole(UserRoleUpdateRequest request) {
     User user = jpaUserRepository.findById(request.userId())
         .orElseThrow(() -> new UserNotFoundException(Map.of("userId", request.userId())));
+    Role oldRole = user.getRole();
     user.updateRole(request.newRole());
     jwtRegistry.invalidateJwtInformation(request.userId());
+    eventPublisher.publishEvent(
+        new RoleUpdatedEvent(request.userId(), oldRole, request.newRole()));
     return userMapper.toDto(user);
   }
 }

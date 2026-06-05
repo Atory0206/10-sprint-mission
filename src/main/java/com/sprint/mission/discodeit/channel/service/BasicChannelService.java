@@ -53,7 +53,7 @@ public class BasicChannelService implements ChannelService {
     } // 나중에 수정 필요
 
     List<ReadStatus> readStatuses = participants.stream()
-        .map(user -> new ReadStatus(user, createdChannel, Instant.now()))
+        .map(user -> new ReadStatus(user, createdChannel, Instant.now(), true))
         .toList();
 
     jpaReadStatusRepository.saveAll(readStatuses);
