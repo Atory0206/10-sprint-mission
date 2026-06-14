@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class NotificationServiceImpl implements NotificationService {
   private final JPANotificationRepository jpaNotificationRepository;
 
   @Override
+  @Cacheable(value = "notificationsByUser", key = "#receiverId")
   @Transactional(readOnly = true)
   public List<NotificationDto> findNotificationsByReceiverId(UUID receiverId) {
     return jpaNotificationRepository.findAllByReceiverId(receiverId)
@@ -36,6 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   @Transactional
+  @CacheEvict(value = "notificationsByUser", key = "#userId")
   public void confirmNotification(UUID notificationId, UUID userId) {
     Notification notification = jpaNotificationRepository.findById(notificationId)
         .orElseThrow(
@@ -47,5 +51,18 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     jpaNotificationRepository.delete(notification);
+  }
+
+  @Override
+  @Transactional
+  @CacheEvict(value = "notificationsByUser", key = "#receiverId")
+  public Notification create(UUID receiverId, String title, String content) {
+    Notification notification = new Notification(
+        receiverId,
+        title,
+        content
+    );
+    jpaNotificationRepository.save(notification);
+    return notification;
   }
 }

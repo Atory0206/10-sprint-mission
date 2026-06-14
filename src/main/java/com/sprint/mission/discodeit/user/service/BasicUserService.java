@@ -18,6 +18,9 @@ import com.sprint.mission.discodeit.user.mapper.UserMapper;
 import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +44,7 @@ public class BasicUserService implements UserService {
 
   @Override
   @Transactional
+  @CacheEvict(value = "users", allEntries = true)
   public UserDto create(UserCreateRequest request,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
 
@@ -99,6 +103,7 @@ public class BasicUserService implements UserService {
 
   @Override
   @Transactional(readOnly = true)
+  @Cacheable(value = "users")
   public List<UserDto> findAll() {
     return jpaUserRepository.findAll()
         .stream()
@@ -109,6 +114,7 @@ public class BasicUserService implements UserService {
   @Override
   @Transactional
   @PreAuthorize("#userId == authentication.principal.userDto.id")
+  @CacheEvict(value = "users", allEntries = true)
   public UserDto update(UUID userId, UserUpdateRequest request,
       Optional<BinaryContentCreateRequest> optionalProfileCreateRequest) {
 
@@ -156,6 +162,7 @@ public class BasicUserService implements UserService {
   @Override
   @Transactional
   @PreAuthorize("#userId == authentication.principal.userDto.id")
+  @CacheEvict(value = "users", allEntries = true)
   public void delete(UUID userId) {
     log.info("[USER_DELETE] 유저 삭제 시작 userId={}", userId);
     User user = jpaUserRepository.findById(userId)

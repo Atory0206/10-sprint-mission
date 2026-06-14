@@ -9,18 +9,20 @@ import com.sprint.mission.discodeit.user.Role;
 import com.sprint.mission.discodeit.user.event.RoleUpdatedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class NotificationRequiredEventListener {
 
   private final JPAReadStatusRepository jpaReadStatusRepository;
   private final JPANotificationRepository jpaNotificationRepository;
 
+  @Async
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @TransactionalEventListener
   public void on(MessageCreatedEvent event) {
@@ -46,6 +48,7 @@ public class NotificationRequiredEventListener {
 
   }
 
+  @Async
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @TransactionalEventListener
   public void on(RoleUpdatedEvent event) {
