@@ -21,7 +21,7 @@ public class KafkaProduceRequiredEventListener {
   private final KafkaTemplate<String, String> kafkaTemplate;
   private final ObjectMapper objectMapper;
 
-  @Async("eventTaskExecutor")
+  @Async("taskExecutor")
   @TransactionalEventListener
   public void on(MessageCreatedEvent event) {
     try {
@@ -33,7 +33,7 @@ public class KafkaProduceRequiredEventListener {
     }
   }
 
-  @Async("eventTaskExecutor")
+  @Async("taskExecutor")
   @TransactionalEventListener
   public void on(RoleUpdatedEvent event) {
     try {
@@ -45,7 +45,7 @@ public class KafkaProduceRequiredEventListener {
     }
   }
 
-  @Async("eventTaskExecutor")
+  @Async("taskExecutor")
   @EventListener
   public void on(S3UploadFailedEvent event) {
     try {
