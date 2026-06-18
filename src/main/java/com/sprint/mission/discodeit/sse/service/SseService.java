@@ -3,8 +3,6 @@ package com.sprint.mission.discodeit.sse.service;
 import com.sprint.mission.discodeit.sse.SseMessage;
 import com.sprint.mission.discodeit.sse.repository.SseEmitterRepository;
 import com.sprint.mission.discodeit.sse.repository.SseMessageRepository;
-import com.sprint.mission.discodeit.user.entity.User;
-import com.sprint.mission.discodeit.user.repository.JPAUserRepository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,7 @@ public class SseService {
     sseEmitter.onError(e -> sseEmitterRepository.remove(receiverId, sseEmitter));
 
     if (lastEventId != null) {
-      List<SseMessage> result = sseMessageRepository.findMessagesAfter(lastEventId);
+      List<SseMessage> result = sseMessageRepository.findMessagesAfter(receiverId, lastEventId);
       for (SseMessage sseMessage : result) {
         try {
           sseEmitter.send(SseEmitter.event()
@@ -50,11 +48,11 @@ public class SseService {
   }
 
   public void send(Collection<UUID> receiverIds, String eventName, Object data) {
-    UUID messageId = UUID.randomUUID();
-    SseMessage message = new SseMessage(messageId, eventName, data);
-    sseMessageRepository.save(message);
-
     for (UUID userId : receiverIds) {
+      UUID messageId = UUID.randomUUID();
+      SseMessage message = new SseMessage(messageId, userId, eventName, data);
+      sseMessageRepository.save(message);
+
       List<SseEmitter> sseEmitters = sseEmitterRepository.get(userId);
       for (SseEmitter sseEmitter : sseEmitters) {
         try {
@@ -71,14 +69,16 @@ public class SseService {
   }
 
   public void broadcast(String eventName, Object data) {
-    UUID messageId = UUID.randomUUID();
-    SseMessage message = new SseMessage(messageId, eventName, data);
-    sseMessageRepository.save(message);
-
     Map<UUID, List<SseEmitter>> allEmitters = sseEmitterRepository.getAll();
+
     for (Map.Entry<UUID, List<SseEmitter>> entry : allEmitters.entrySet()) {
       UUID userId = entry.getKey();
       List<SseEmitter> sseEmitters = entry.getValue();
+
+      UUID messageId = UUID.randomUUID();
+      SseMessage message = new SseMessage(messageId, userId, eventName, data);
+      sseMessageRepository.save(message);
+
       for (SseEmitter sseEmitter : sseEmitters) {
         try {
           sseEmitter.send(SseEmitter.event()

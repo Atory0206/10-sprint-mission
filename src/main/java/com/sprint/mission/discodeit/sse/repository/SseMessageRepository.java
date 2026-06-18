@@ -21,8 +21,8 @@ public class SseMessageRepository {
     }
   }
 
-  public List<SseMessage> findMessagesAfter(UUID lastEventId) {
-    if (lastEventId == null) {
+  public List<SseMessage> findMessagesAfter(UUID receiverId, UUID lastEventId) {
+    if (lastEventId == null || receiverId == null) {
       return new ArrayList<>();
     }
     if (eventIdQueue.contains(lastEventId)) {
@@ -30,7 +30,10 @@ public class SseMessageRepository {
       List<SseMessage> result = new ArrayList<>();
       for (UUID eventId : eventIdQueue) {
         if (found) {
-          result.add(messages.get(eventId));
+          SseMessage message = messages.get(eventId);
+          if (message != null && receiverId.equals(message.receiverId())) {
+            result.add(message);
+          }
         }
         if (eventId.equals(lastEventId)) {
           found = true;
